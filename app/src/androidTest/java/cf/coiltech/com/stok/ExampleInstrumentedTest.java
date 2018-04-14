@@ -1,4 +1,4 @@
-package vision.google.com.qrcodescanner;
+package cf.coiltech.com.stok;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;

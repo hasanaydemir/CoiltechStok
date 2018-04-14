@@ -4,7 +4,7 @@
     android:id="@+id/activity_scan"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="vision.google.com.qrcodescanner.ScanActivity">
+    tools:context="cf.coiltech.com.stok.ScanActivity">
 
     <SurfaceView
         android:id="@+id/cameraView"

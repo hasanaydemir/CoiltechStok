@@ -1,13 +1,11 @@
-package vision.google.com.qrcodescanner;
+package cf.coiltech.com.stok;
 /**
  * Created by Hasan Aydemir 10.04.2018
  * */
-import android.*;
 import android.Manifest;
 import android.app.ProgressDialog;
 
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.support.design.widget.FloatingActionButton;
@@ -24,13 +22,11 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
-import com.android.volley.DefaultRetryPolicy;
+
 import com.android.volley.Request;
-import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
 
 import android.text.Editable;
 import android.text.TextWatcher;

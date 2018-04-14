@@ -1,4 +1,4 @@
-package vision.google.com.qrcodescanner;
+package cf.coiltech.com.stok;
 
 import org.junit.Test;
 

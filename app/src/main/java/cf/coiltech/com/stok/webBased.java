@@ -1,10 +1,9 @@
-package vision.google.com.qrcodescanner;
+package cf.coiltech.com.stok;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.webkit.WebView;
 import android.widget.Toast;
-import android.app.Activity;
 import android.app.ProgressDialog;
  import android.webkit.WebViewClient;
 

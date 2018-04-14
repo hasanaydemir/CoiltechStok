@@ -1,8 +1,7 @@
-package vision.google.com.qrcodescanner;
+package cf.coiltech.com.stok;
 /**
  * Created by Hasan Aydemir 10.04.2018
  * */
-import android.*;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
