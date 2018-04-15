@@ -11,16 +11,16 @@ import android.widget.Toast;
 import java.util.Collections;
 import java.util.List;
 
-public class AdapterFish extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class AdapterStock extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private Context context;
     private LayoutInflater inflater;
-    List<DataFish> data= Collections.emptyList();
-    DataFish current;
+    List<DataStock> data= Collections.emptyList();
+    DataStock current;
     int currentPos=0;
 
     // create constructor to initialize context and data sent from MainActivity
-    public AdapterFish(Context context, List<DataFish> data){
+    public AdapterStock(Context context, List<DataStock> data){
         this.context=context;
         inflater= LayoutInflater.from(context);
         this.data=data;
@@ -40,7 +40,7 @@ public class AdapterFish extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
         // Get current position of item in RecyclerView to bind data and assign values from list
         MyHolder myHolder= (MyHolder) holder;
-        DataFish current=data.get(position);
+        DataStock current=data.get(position);
         myHolder.textFishName.setText("Marka:" + current.marka);
         myHolder.textSize.setText("Ürün Adı: " + current.urunAdi);
         myHolder.textSize.setTextColor(ContextCompat.getColor(context, R.color.colorAccent));
