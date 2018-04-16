@@ -1,153 +1,233 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/activity_main"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="cf.coiltech.com.stok.MainActivity">
+    android:layout_height="match_parent">
 
-
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:id="@+id/activity_main"
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/appbar"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentStart="true"
-        android:orientation="vertical"
-        android:paddingBottom="@dimen/activity_vertical_margin"
-        android:paddingLeft="@dimen/activity_horizontal_margin"
-        android:paddingRight="@dimen/activity_horizontal_margin"
-        android:paddingTop="@dimen/activity_vertical_margin"
-        tools:context="net.simplifiedcoding.androidmysqlsync.MainActivity">
+        android:layout_height="57dp"
+        android:background="#faf7f7">
 
-        <LinearLayout
+        <android.support.design.widget.CollapsingToolbarLayout
             android:layout_width="match_parent"
-            android:layout_height="42dp"
-            android:orientation="horizontal">
+            android:layout_height="135dp"
+            app:contentScrim="#fcfcfc"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed"
+            app:toolbarId="@+id/toolbar">
 
-            <ImageView
-                android:id="@+id/imageView"
-                android:layout_width="173dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                app:srcCompat="@drawable/pres_besleme_sistemleri_logo" />
-
-            <TextView
-                android:id="@+id/header"
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:paddingLeft="50dp"
-                android:text="Stok v1b"
-                android:textAppearance="@style/TextAppearance.AppCompat.Headline"
-                android:textColor="@color/accent_material_light_1"
-                android:typeface="normal" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <EditText
-                android:id="@+id/urunAra"
-                style="@android:style/Widget.Holo.Light.AutoCompleteTextView"
-                android:layout_width="200dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="3"
-                android:textAppearance="@android:style/TextAppearance.Material.Medium"
-                android:textColorLink="@color/accent_material_light_1"
-                android:textIsSelectable="false" />
-
-            <Button
-                android:id="@+id/scanbtn"
-                android:layout_width="37dp"
-                android:layout_height="37dp"
-                android:background="@drawable/barcode" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="3"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/textView5"
-                android:layout_width="match_parent"
-                android:layout_height="42dp"
-                android:clickable="false"
-                android:editable="false"
-                android:enabled="false" />
-
-            <TextView
-                android:id="@+id/urunMarka"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="14sp" />
-
-            <TextView
-                android:id="@+id/urunAdi"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textColor="@color/colorAccent"
-                android:textSize="18sp" />
-
-            <TextView
-                android:id="@+id/urunID"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:clickable="false"
-                tools:visibility="invisible" />
+                android:layout_height="?attr/actionBarSize"></android.support.v7.widget.Toolbar>
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="76dp"
+                android:layout_height="match_parent"
                 android:orientation="horizontal">
 
-                <TextView
-                    android:id="@+id/textView4"
-                    android:layout_width="159dp"
-                    android:layout_height="31dp"
+                <ImageView
+                    android:id="@+id/imageView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="57dp"
                     android:layout_weight="1"
-                    android:text="Adet :" />
+                    android:paddingBottom="5dp"
+                    android:paddingLeft="0dp"
+                    android:paddingRight="5dp"
+                    android:paddingTop="5dp"
+                    app:srcCompat="@drawable/banner" />
 
-                <EditText
-                    android:id="@+id/urunAdet"
+            </LinearLayout>
+        </android.support.design.widget.CollapsingToolbarLayout>
+
+    </android.support.design.widget.AppBarLayout>
+
+    <RelativeLayout
+        android:id="@+id/activity_main"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="0dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:paddingTop="60dp"
+        tools:context="cf.coiltech.com.stok.MainActivity">
+
+
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:id="@+id/activity_main"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentStart="true"
+            android:orientation="vertical"
+            android:paddingBottom="0dp"
+            android:paddingLeft="0dp"
+            android:paddingRight="0dp"
+            android:paddingTop="0dp"
+            tools:context="cf.coiltech.com.stok.MainActivity">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/textView5"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:ems="10"
-                    android:inputType="number" />
+                    android:layout_height="50dp"
+                    android:layout_weight="3"
+                    android:clickable="false"
+                    android:editable="false"
+                    android:enabled="false"
+                    android:paddingTop="10dp"
+                    android:text="Barkod Okuyucu"
+                    android:textColor="@color/cast_expanded_controller_progress_text_color"
+                    android:textSize="24sp" />
             </LinearLayout>
 
-            <Button
-                android:id="@+id/urunEkle"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Ekle" />
+                android:orientation="horizontal"
+                android:paddingTop="20dp">
+
+                <EditText
+                    android:id="@+id/urunAra"
+                    style="@android:style/Widget.Holo.Light.AutoCompleteTextView"
+                    android:layout_width="200dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="3"
+                    android:enabled="false"
+                    android:textAppearance="@android:style/TextAppearance.Material.Medium"
+                    android:textColorLink="@color/accent_material_light_1" />
+
+                <Button
+                    android:id="@+id/scanbtn"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:background="@drawable/barcode" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="3"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/urunMarka"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:id="@+id/urunAdi"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@android:color/background_light"
+                    android:textSize="18sp" />
+
+                <TextView
+                    android:id="@+id/urunID"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clickable="false"
+                    android:visibility="gone"
+                    tools:visibility="invisible" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="76dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/adetLbl"
+                        android:layout_width="159dp"
+                        android:layout_height="31dp"
+                        android:layout_weight="1"
+                        android:text="Adet :"
+                        android:visibility="gone" />
+
+                    <EditText
+                        android:id="@+id/urunAdet"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:ems="10"
+                        android:inputType="number"
+                        android:textColorLink="@color/list_row_hover_start_color"
+                        android:visibility="gone" />
+                </LinearLayout>
+
+                <Button
+                    android:id="@+id/urunEkle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Ekle"
+                    android:textColor="@color/cast_libraries_material_featurehighlight_text_body_color"
+                    android:visibility="gone" />
+
+                <Button
+                    android:id="@+id/veriListele"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Listele" />
+
+            </LinearLayout>
 
         </LinearLayout>
 
-    </LinearLayout>
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab"
-        android:layout_width="wrap_content"
+
+    </RelativeLayout>
+
+    <android.support.design.widget.BottomNavigationView
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
-        android:layout_gravity="end|bottom"
-        android:layout_marginBottom="79dp"
-        android:layout_marginEnd="34dp"
-        android:src="@android:drawable/ic_menu_add"
-        app:backgroundTint="@color/accent_material_light_1" />
 
-</RelativeLayout>
+        android:layout_gravity="bottom|center">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:layout_gravity="bottom"
+            android:orientation="horizontal">
+
+            <ImageButton
+                android:id="@+id/imageButton2"
+                android:layout_width="80dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="#ededed"
+                android:scaleType="fitCenter"
+                app:srcCompat="@drawable/menuiconlari_01" />
+
+            <ImageButton
+                android:id="@+id/imageButton3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:adjustViewBounds="true"
+                android:background="#ededed"
+                android:scaleType="fitCenter"
+                app:srcCompat="@drawable/menuiconlari_03" />
+
+            <ImageButton
+                android:id="@+id/imageButton4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:adjustViewBounds="true"
+                android:background="#ededed"
+                android:scaleType="fitCenter"
+                app:srcCompat="@drawable/menuiconlari_05" />
+
+        </LinearLayout>
+
+    </android.support.design.widget.BottomNavigationView>
+
+</android.support.design.widget.CoordinatorLayout>

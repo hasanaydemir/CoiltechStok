@@ -1,5 +1,7 @@
 package cf.coiltech.com.stok;
-
+/**
+ * Created by Hasan Aydemir 10.04.2018
+ * */
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.webkit.WebView;

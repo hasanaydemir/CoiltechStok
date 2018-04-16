@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimary">#3f51b5</color>
     <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#ff2f00</color>
-    <color name="accent_material_light_1">#f58f00</color>
+    <color name="colorAccent">#f50400</color>
+    <color name="accent_material_light_1">#ffffff</color>
+    <color name="list_divider">#d9d9d9</color>
+    <color name="list_row_start_color">#ccc</color>
+    <color name="list_row_end_color">#ccc</color>
+    <color name="list_row_hover_start_color">#b6b4af</color>
+    <color name="list_row_hover_end_color">#b6b4af</color>
 </resources>

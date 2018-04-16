@@ -1,5 +1,7 @@
-package cf.coiltech.com.stok;
-
+package cf.coiltech.com.stok.data;
+/**
+ * Created by Hasan Aydemir 10.04.2018
+ * */
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.support.v4.util.LruCache;

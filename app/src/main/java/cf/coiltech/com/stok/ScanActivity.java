@@ -33,7 +33,7 @@ public class ScanActivity extends AppCompatActivity {
         cameraView.setZOrderMediaOverlay(true);
         holder = cameraView.getHolder();
         barcode = new BarcodeDetector.Builder(this)
-                //buraya barkod türleri girilerek sınırlandırma yapılabilir. ALl_FORMATS tüm barkodları tanır
+                //This line most important about recognize barcode types.
                 .setBarcodeFormats(Barcode.ALL_FORMATS)
                 .build();
         if(!barcode.isOperational()){

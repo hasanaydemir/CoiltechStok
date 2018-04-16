@@ -1,4 +1,4 @@
-package cf.coiltech.com.stok;
+package cf.coiltech.com.stok.adapter;
 
 import android.content.Context;
 import android.support.v4.content.ContextCompat;
@@ -10,6 +10,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 import java.util.Collections;
 import java.util.List;
+
+import cf.coiltech.com.stok.R;
+import cf.coiltech.com.stok.data.DataStock;
 
 public class AdapterStock extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
@@ -29,7 +32,7 @@ public class AdapterStock extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     // Inflate the layout when ViewHolder created
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view=inflater.inflate(R.layout.container_fish, parent,false);
+        View view=inflater.inflate(R.layout.container_data, parent,false);
         MyHolder holder=new MyHolder(view);
         return holder;
     }

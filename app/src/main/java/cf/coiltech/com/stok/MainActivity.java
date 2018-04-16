@@ -8,7 +8,6 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -46,18 +45,21 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import cf.coiltech.com.stok.data.MySingleton;
+
 
 public class MainActivity extends AppCompatActivity {
-    Button scanbtn;
 
-    private EditText urunAra;
     public static final int REQUEST_CODE = 100;
     public static final int PERMISSION_REQUEST = 200;
 
     // CONNECTION_TIMEOUT and READ_TIMEOUT are in milliseconds
     public static final int CONNECTION_TIMEOUT = 10000;
     public static final int READ_TIMEOUT = 15000;
-    TextView urunAdi, urunID, urunMarka;
+    Button veriListele;
+    Button scanbtn;
+    private EditText urunAra;
+    TextView urunAdi, urunID, urunMarka,adetLbl;
     EditText urunAdet;
     Button urunEkle;
     private ProgressDialog pd;
@@ -68,14 +70,14 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-
+        //Create objects for database select and insert process
         urunMarka = (TextView) findViewById(R.id.urunMarka) ;
         urunAdi = (TextView) findViewById(R.id.urunAdi) ;
         urunID = (TextView) findViewById(R.id.urunID) ;
         urunAdet = (EditText) findViewById(R.id.urunAdet) ;
         urunEkle = (Button) findViewById(R.id.urunEkle);
         urunAra = (EditText) findViewById(R.id.urunAra) ;
+        adetLbl = (TextView) findViewById(R.id.adetLbl) ;
 
         pd = new ProgressDialog(MainActivity.this);
         pd.setMessage("Yükleniyor...");
@@ -125,28 +127,40 @@ public class MainActivity extends AppCompatActivity {
                 GetData();
                 InsertData(TempUrunAdi, TempUrunAdet,TempUrunID);
 
-
-
-
-
             }
         });
 
+
+        /*
+        //Floating button action
         FloatingActionButton kayarButon = (FloatingActionButton) findViewById(R.id.fab);
 
+        //change activity by floating button
         kayarButon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, webBased.class);
+                Intent intent = new Intent(MainActivity.this, DataLists.class);
+                startActivityForResult(intent, RESULT_OK);
+            }
+        });
+*/
+
+
+        //listele button action
+        Button veriListele = (Button) findViewById(R.id.veriListele);
+
+        //change activity by floating button
+        veriListele.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, DataLists.class);
                 startActivityForResult(intent, RESULT_OK);
             }
         });
 
-
-
     }
 
-
+// Add value to temporary variable
     public void GetData(){
 
         TempUrunAdi = urunAdi.getText().toString();
@@ -155,7 +169,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-
+//QR code value setText filter TextView
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_CODE && resultCode == RESULT_OK) {
@@ -165,13 +179,14 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         urunAra.setText(barcode.displayValue);
+
                     }
                 });
             }
         }
     }
 
-    // QR koda göre ürün sorgulama
+    // DB filter by QR Code value
     private void getSqlDetails() {
 
         String url= "http://192.168.2.22/hm/api/urunArar.php?searchQuery="+urunAydi;
@@ -200,7 +215,13 @@ public class MainActivity extends AppCompatActivity {
                                 urunAdi.setText(isim);
                                 urunID.setText(id);
                                 urunMarka.setText(brand);
+ if(urunAdi.toString()!="") {
 
+     urunAdet.setVisibility(View.VISIBLE);
+     adetLbl.setVisibility(View.VISIBLE);
+     urunEkle.setVisibility(View.VISIBLE);
+
+ }
 
                             }
                         } catch (JSONException e) {
@@ -229,7 +250,7 @@ public class MainActivity extends AppCompatActivity {
         MySingleton.getInstance(getApplicationContext()).addToRequestQueue(stringRequest);
     }
 
-// veri tabanına kaydetme
+// insert TextView and EditText values to database
     public void InsertData(final String turunAdi, final String turunAdet, final String turunID){
 
         class SendPostReqAsyncTask extends AsyncTask<String, Void, String> {
@@ -275,6 +296,9 @@ public class MainActivity extends AppCompatActivity {
                 urunAdi.setText("");
                 urunID.setText("");
                 urunAdet.setText("");
+                urunAdet.setVisibility(View.INVISIBLE);
+                adetLbl.setVisibility(View.INVISIBLE);
+                urunEkle.setVisibility(View.INVISIBLE);
                 urunAra.setText("");
                 Toast.makeText(MainActivity.this, "Ürün başarıyla listeye eklendi", Toast.LENGTH_LONG).show();
 
