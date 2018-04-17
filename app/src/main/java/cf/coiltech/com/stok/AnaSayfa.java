@@ -26,5 +26,18 @@ public class AnaSayfa extends AppCompatActivity {
                 startActivityForResult(intent, RESULT_OK);
             }
         });
+
+        //stock-take activity button action
+        ImageButton sayimYYYapButton = (ImageButton) findViewById(R.id.sayimYYYapButton);
+
+        //change activity by button
+        sayimYYYapButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(AnaSayfa.this, SayimActivity.class);
+                startActivityForResult(intent, RESULT_OK);
+            }
+        });
+
     }
 }

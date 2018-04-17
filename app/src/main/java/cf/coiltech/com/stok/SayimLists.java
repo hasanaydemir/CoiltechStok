@@ -2,9 +2,9 @@ package cf.coiltech.com.stok;
 /**
  * Created by Hasan Aydemir 10.04.2018
  * */
+
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -25,10 +25,6 @@ import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.StringRequest;
-import cf.coiltech.com.stok.adapter.Adapter;
-import cf.coiltech.com.stok.app.AppController;
-import cf.coiltech.com.stok.data.Data;
-import cf.coiltech.com.stok.util.Server;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -39,7 +35,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class DataLists extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
+import cf.coiltech.com.stok.adapter.Adapter;
+import cf.coiltech.com.stok.app.AppController;
+import cf.coiltech.com.stok.data.Data;
+import cf.coiltech.com.stok.util.Server;
+
+public class SayimLists extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
 
     Toolbar toolbar;
     ListView list;
@@ -54,14 +55,14 @@ public class DataLists extends AppCompatActivity implements SwipeRefreshLayout.O
     TextView txt_urunAdi, txt_urunMarka;
     String id, urunAdi, urunAdet, urunMarka;
     Button barcodeGeriDon,veriAktar;
-    private static final String TAG = DataLists.class.getSimpleName();
+    private static final String TAG = SayimLists.class.getSimpleName();
 
-    private static String url_select 	 = Server.URL + "urunGeciciCek.php";
-    private static String url_insert 	 = Server.URL + "urunEkle.php";
-    private static String url_edit 	     = Server.URL + "urunDuzenle.php";
-    private static String url_update 	 = Server.URL + "urunGuncelle.php";
-    private static String url_delete 	 = Server.URL + "urunSil.php";
-    private static String url_total_update 	 = Server.URL + "sayimAktar.php";
+    private static String url_select 	 = Server.URL + "/sayim/urunGeciciCek.php";
+    private static String url_insert 	 = Server.URL + "/sayim/sayimEkle.php";
+    private static String url_edit 	     = Server.URL + "/sayim/urunDuzenle.php";
+    private static String url_update 	 = Server.URL + "/sayim/urunGuncelle.php";
+    private static String url_delete 	 = Server.URL + "/sayim/urunSil.php";
+    private static String url_total_update 	 = Server.URL + "/sayim/sayimAktar.php";
 
     public static final String TAG_ID       = "id";
     public static final String TAG_URUN_ADI = "model";
@@ -76,7 +77,7 @@ public class DataLists extends AppCompatActivity implements SwipeRefreshLayout.O
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_data_lists);
+        setContentView(R.layout.activity_sayim_lists);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
 
         setSupportActionBar(toolbar);
@@ -87,7 +88,7 @@ public class DataLists extends AppCompatActivity implements SwipeRefreshLayout.O
         list    = (ListView) findViewById(R.id.list);
 
         // JSON adapter
-        adapter = new Adapter(DataLists.this, itemList);
+        adapter = new Adapter(SayimLists.this, itemList);
         list.setAdapter(adapter);
 
         // Swipe to refresg action
@@ -116,7 +117,7 @@ public class DataLists extends AppCompatActivity implements SwipeRefreshLayout.O
                 final String idx = itemList.get(position).getId();
 
                 final CharSequence[] dialogitem = {"Düzenle", "Sil"};
-                dialog = new AlertDialog.Builder(DataLists.this);
+                dialog = new AlertDialog.Builder(SayimLists.this);
                 dialog.setCancelable(true);
                 dialog.setItems(dialogitem, new DialogInterface.OnClickListener() {
 
@@ -185,7 +186,7 @@ public class DataLists extends AppCompatActivity implements SwipeRefreshLayout.O
 
     // get values to dialog form
     private void DialogForm(String idx, String urunadix, String urunmarkax, String urunadetx, String button) {
-        dialog = new AlertDialog.Builder(DataLists.this);
+        dialog = new AlertDialog.Builder(SayimLists.this);
         inflater = getLayoutInflater();
         dialogView = inflater.inflate(R.layout.form_update, null);
         dialog.setView(dialogView);
@@ -309,11 +310,11 @@ public class DataLists extends AppCompatActivity implements SwipeRefreshLayout.O
                         callVolley();
                         kosong();
 
-                        Toast.makeText(DataLists.this, jObj.getString(TAG_MESSAGE), Toast.LENGTH_LONG).show();
+                        Toast.makeText(SayimLists.this, jObj.getString(TAG_MESSAGE), Toast.LENGTH_LONG).show();
                         adapter.notifyDataSetChanged();
 
                     } else {
-                        Toast.makeText(DataLists.this, jObj.getString(TAG_MESSAGE), Toast.LENGTH_LONG).show();
+                        Toast.makeText(SayimLists.this, jObj.getString(TAG_MESSAGE), Toast.LENGTH_LONG).show();
                     }
                 } catch (JSONException e) {
                     // JSON error
@@ -326,7 +327,7 @@ public class DataLists extends AppCompatActivity implements SwipeRefreshLayout.O
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.e(TAG, "Error: " + error.getMessage());
-                Toast.makeText(DataLists.this, error.getMessage(), Toast.LENGTH_LONG).show();
+                Toast.makeText(SayimLists.this, error.getMessage(), Toast.LENGTH_LONG).show();
             }
         }) {
 
@@ -382,7 +383,7 @@ public class DataLists extends AppCompatActivity implements SwipeRefreshLayout.O
                         adapter.notifyDataSetChanged();
 
                     } else {
-                        Toast.makeText(DataLists.this, jObj.getString(TAG_MESSAGE), Toast.LENGTH_LONG).show();
+                        Toast.makeText(SayimLists.this, jObj.getString(TAG_MESSAGE), Toast.LENGTH_LONG).show();
                     }
                 } catch (JSONException e) {
                     // JSON error
@@ -395,7 +396,7 @@ public class DataLists extends AppCompatActivity implements SwipeRefreshLayout.O
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.e(TAG, "Error: " + error.getMessage());
-                Toast.makeText(DataLists.this, error.getMessage(), Toast.LENGTH_LONG).show();
+                Toast.makeText(SayimLists.this, error.getMessage(), Toast.LENGTH_LONG).show();
             }
         }) {
 
@@ -431,12 +432,12 @@ public class DataLists extends AppCompatActivity implements SwipeRefreshLayout.O
 
                         callVolley();
 
-                        Toast.makeText(DataLists.this, jObj.getString(TAG_MESSAGE), Toast.LENGTH_LONG).show();
+                        Toast.makeText(SayimLists.this, jObj.getString(TAG_MESSAGE), Toast.LENGTH_LONG).show();
 
                         adapter.notifyDataSetChanged();
 
                     } else {
-                        Toast.makeText(DataLists.this, jObj.getString(TAG_MESSAGE), Toast.LENGTH_LONG).show();
+                        Toast.makeText(SayimLists.this, jObj.getString(TAG_MESSAGE), Toast.LENGTH_LONG).show();
                     }
                 } catch (JSONException e) {
                     // JSON error
@@ -449,7 +450,7 @@ public class DataLists extends AppCompatActivity implements SwipeRefreshLayout.O
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.e(TAG, "Error: " + error.getMessage());
-                Toast.makeText(DataLists.this, error.getMessage(), Toast.LENGTH_LONG).show();
+                Toast.makeText(SayimLists.this, error.getMessage(), Toast.LENGTH_LONG).show();
             }
         }) {
 
@@ -483,13 +484,13 @@ public class DataLists extends AppCompatActivity implements SwipeRefreshLayout.O
                     // check error json values
                     if (success == 1) {
                         callVolley();
-                        Toast.makeText(DataLists.this, jObj.getString(TAG_MESSAGE), Toast.LENGTH_LONG).show();
+                        Toast.makeText(SayimLists.this, jObj.getString(TAG_MESSAGE), Toast.LENGTH_LONG).show();
 
 
                         adapter.notifyDataSetChanged();
 
                     } else {
-                        Toast.makeText(DataLists.this, jObj.getString(TAG_MESSAGE), Toast.LENGTH_LONG).show();
+                        Toast.makeText(SayimLists.this, jObj.getString(TAG_MESSAGE), Toast.LENGTH_LONG).show();
                     }
                 } catch (JSONException e) {
                     // JSON error
@@ -502,7 +503,7 @@ public class DataLists extends AppCompatActivity implements SwipeRefreshLayout.O
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.e(TAG, "Error: " + error.getMessage());
-                Toast.makeText(DataLists.this, error.getMessage(), Toast.LENGTH_LONG).show();
+                Toast.makeText(SayimLists.this, error.getMessage(), Toast.LENGTH_LONG).show();
             }
         });
 

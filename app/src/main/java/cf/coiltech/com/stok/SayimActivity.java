@@ -2,32 +2,17 @@ package cf.coiltech.com.stok;
 /**
  * Created by Hasan Aydemir 10.04.2018
  * */
+
 import android.Manifest;
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
-
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicNameValuePair;
-
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
@@ -38,42 +23,51 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
 import com.google.android.gms.vision.barcode.Barcode;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 import cf.coiltech.com.stok.data.MySingleton;
 
 
-public class MainActivity extends AppCompatActivity {
+public class SayimActivity extends AppCompatActivity {
 
     public static final int REQUEST_CODE = 100;
     public static final int PERMISSION_REQUEST = 200;
 
-    // CONNECTION_TIMEOUT and READ_TIMEOUT are in milliseconds
-    public static final int CONNECTION_TIMEOUT = 10000;
-    public static final int READ_TIMEOUT = 15000;
+
     Button veriListele,scanbtn,urunEkle,tarihButton;
      private EditText urunAra;
     TextView urunAdi, urunID, urunMarka,adetLbl,teslimTarihi;
-    EditText urunAdet,teslimAlan,uyfNo;
+    EditText urunAdet;
      private ProgressDialog pd;
     String urunAydi;
-    String ServerURL = "http://192.168.2.22/hm/api/urunEkle.php" ;
-    String TempUrunAdi, TempUrunAdet, TempUrunID,TempTeslimAlan,TempTeslimTarihi,TempUyfNo;
+    String ServerURL = "http://192.168.2.22/hm/api/sayim/sayimEkle.php" ;
+    String TempUrunAdi, TempUrunAdet, TempUrunID,TempTeslimTarihi;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_sayim);
         //Create objects for database select and insert process
         urunMarka = (TextView) findViewById(R.id.urunMarka) ;
         urunAdi = (TextView) findViewById(R.id.urunAdi) ;
@@ -82,9 +76,8 @@ public class MainActivity extends AppCompatActivity {
         urunEkle = (Button) findViewById(R.id.urunEkle);
         urunAra = (EditText) findViewById(R.id.urunAra) ;
         adetLbl = (TextView) findViewById(R.id.adetLbl) ;
-        teslimAlan = (EditText) findViewById(R.id.teslimAlan);
-        uyfNo = (EditText) findViewById(R.id.uyfNo);
-        pd = new ProgressDialog(MainActivity.this);
+
+        pd = new ProgressDialog(SayimActivity.this);
         pd.setMessage("Yükleniyor...");
         pd.setCancelable(false);
         pd.setCanceledOnTouchOutside(false);
@@ -95,36 +88,37 @@ public class MainActivity extends AppCompatActivity {
         scanbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, ScanActivity.class);
+                Intent intent = new Intent(SayimActivity.this, ScanActivity.class);
                 startActivityForResult(intent, REQUEST_CODE);
             }
         });
 
 
 
-        //Go home button action
-        ImageButton anaSayfaButton = (ImageButton) findViewById(R.id.anaSayfaButton);
+        //stock-take activity button action
+        ImageButton anaSSayfaButton = (ImageButton) findViewById(R.id.anaSSayfaButton);
 
         //change activity by button
-        anaSayfaButton.setOnClickListener(new View.OnClickListener() {
+        anaSSayfaButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, AnaSayfa.class);
+                Intent intent = new Intent(SayimActivity.this, AnaSayfa.class);
                 startActivityForResult(intent, RESULT_OK);
             }
         });
 
         //stock-take activity button action
-        ImageButton sayimYapButton = (ImageButton) findViewById(R.id.sayimYapButton);
+        ImageButton cikisYYapButton = (ImageButton) findViewById(R.id.cikisYYapButton);
 
         //change activity by button
-        sayimYapButton.setOnClickListener(new View.OnClickListener() {
+        cikisYYapButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, SayimActivity.class);
+                Intent intent = new Intent(SayimActivity.this, MainActivity.class);
                 startActivityForResult(intent, RESULT_OK);
             }
         });
+
 
 
         // DB filter textView watcher
@@ -156,13 +150,13 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View view) {
-         if(urunAdet.getText().toString().equals("") || teslimTarihi.getText().toString().equals("") || teslimAlan.getText().toString().equals("")  || uyfNo.getText().toString().equals("")    )
+         if(urunAdet.getText().toString().equals("") || teslimTarihi.getText().toString().equals("")     )
                 {
-                    Toast.makeText(MainActivity.this,"Adet, Teslim Alan, UYF No ya da Tarih alanları boş bırakılamaz girmediniz!", Toast.LENGTH_LONG).show();
+                    Toast.makeText(SayimActivity.this,"Adet, Teslim Alan, UYF No ya da Tarih alanları boş bırakılamaz girmediniz!", Toast.LENGTH_LONG).show();
                 }
                else {
                 GetData();
-                  InsertData(TempUrunAdi, TempUrunAdet, TempUrunID,TempTeslimAlan,TempUyfNo,TempTeslimTarihi);
+                  InsertData(TempUrunAdi, TempUrunAdet,TempUrunID,TempTeslimTarihi);
 
                 }
 
@@ -171,19 +165,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-        /*
-        //Floating button action
-        FloatingActionButton kayarButon = (FloatingActionButton) findViewById(R.id.fab);
 
-        //change activity by floating button
-        kayarButon.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, DataLists.class);
-                startActivityForResult(intent, RESULT_OK);
-            }
-        });
-*/
 
 
         //listele button action
@@ -193,7 +175,7 @@ public class MainActivity extends AppCompatActivity {
         veriListele.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, DataLists.class);
+                Intent intent = new Intent(SayimActivity.this,SayimLists.class);
                 startActivityForResult(intent, RESULT_OK);
             }
         });
@@ -213,7 +195,7 @@ public class MainActivity extends AppCompatActivity {
                 int month = mcurrentTime.get(Calendar.MONTH);//current month
                 int day = mcurrentTime.get(Calendar.DAY_OF_MONTH);//current month
                  DatePickerDialog datePicker;//Datepicker object
-                datePicker = new DatePickerDialog(MainActivity.this, new DatePickerDialog.OnDateSetListener() {
+                datePicker = new DatePickerDialog(SayimActivity.this, new DatePickerDialog.OnDateSetListener() {
 
                     @Override
                     public void onDateSet(DatePicker view, int year, int monthOfYear,
@@ -244,9 +226,7 @@ public class MainActivity extends AppCompatActivity {
         TempUrunAdi = urunAdi.getText().toString();
         TempUrunID = urunID.getText().toString();
         TempUrunAdet = urunAdet.getText().toString();
-        TempTeslimAlan = teslimAlan.getText().toString();
         TempTeslimTarihi = teslimTarihi.getText().toString();
-        TempUyfNo = uyfNo.getText().toString();
 
     }
 
@@ -332,7 +312,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 // insert TextView and EditText values to database
-    public void InsertData(final String turunAdi, final String turunAdet, final String turunID, final String tteslimalan,final String tuyfno, final String tTeslimTarihi ){
+    public void InsertData(final String turunAdi, final String turunAdet, final String turunID, final String tTeslimTarihi ){
 
      class SendPostReqAsyncTask extends AsyncTask<String, Void, String> {
         @Override
@@ -341,18 +321,14 @@ public class MainActivity extends AppCompatActivity {
             String UrunAdiHolder = turunAdi;
             String UrunAdetHolder = turunAdet;
             String UrunIDHolder = turunID;
-            String TeslimAlanHolder = tteslimalan;
             String TeslimTarihiHolder = tTeslimTarihi;
-            String UyfNoHolder = tuyfno;
 
             List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 
             nameValuePairs.add(new BasicNameValuePair("urunAdi", UrunAdiHolder));
             nameValuePairs.add(new BasicNameValuePair("urunID", UrunIDHolder));
             nameValuePairs.add(new BasicNameValuePair("urunAdet", UrunAdetHolder));
-            nameValuePairs.add(new BasicNameValuePair("teslimAlan", TeslimAlanHolder));
             nameValuePairs.add(new BasicNameValuePair("teslimTarihi", TeslimTarihiHolder));
-            nameValuePairs.add(new BasicNameValuePair("uyfNo", UyfNoHolder));
 
 
             try {
@@ -390,7 +366,7 @@ public class MainActivity extends AppCompatActivity {
             adetLbl.setVisibility(View.INVISIBLE);
             urunEkle.setVisibility(View.INVISIBLE);
             urunAra.setText("");
-            Toast.makeText(MainActivity.this, "Ürün başarıyla listeye eklendi", Toast.LENGTH_LONG).show();
+            Toast.makeText(SayimActivity.this, "Ürün başarıyla listeye eklendi", Toast.LENGTH_LONG).show();
 
         }
     }

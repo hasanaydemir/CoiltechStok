@@ -16,7 +16,6 @@
         <meta-data
             android:name="com.google.android.gms.cf.DEPENDENCIES"
             android:value="barcode" />
-
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop">
@@ -30,6 +29,18 @@
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
         <activity android:name=".ScanActivity" />
+        <activity
+            android:name=".SayimActivity"
+            android:launchMode="singleTop">
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH" />
+                <action android:name="android.intent.action.VIEW" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".SayimLists"
+            android:theme="@style/AppTheme.NoActionBar">
+        </activity>
         <activity android:name=".webBased" />
         <activity android:name=".AnaSayfa">   <intent-filter>
             <action android:name="android.intent.action.MAIN" />
