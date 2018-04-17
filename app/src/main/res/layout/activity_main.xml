@@ -71,7 +71,7 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="60dp"
+                android:layout_height="130dp"
                 android:orientation="vertical">
 
                 <TextView
@@ -86,6 +86,49 @@
                     android:text="Barkod Okuyucu"
                     android:textColor="@color/cast_expanded_controller_progress_text_color"
                     android:textSize="24sp" />
+
+                <EditText
+                    android:id="@+id/uyfNo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="3"
+                    android:ems="10"
+                    android:hint="UYF No"
+                    android:inputType="textPersonName" />
+
+                <EditText
+                    android:id="@+id/teslimAlan"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="3"
+                    android:ems="10"
+                    android:hint="Teslim Alan"
+                    android:inputType="textPersonName" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="55dp"
+                android:orientation="horizontal">
+
+                <EditText
+                    android:id="@+id/teslimTarihi"
+                    android:layout_width="200dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:ems="10"
+                    android:hint="Tarih Giriniz"
+                    android:inputType="date" />
+
+                <Button
+                    android:id="@+id/tarihButton"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:background="@drawable/calendar"
+                    android:onClick="showDatePickerDialog" />
+                />
+
             </LinearLayout>
 
             <LinearLayout
@@ -198,13 +241,23 @@
             android:orientation="horizontal">
 
             <ImageButton
-                android:id="@+id/imageButton2"
+                android:id="@+id/anaSayfaButton"
                 android:layout_width="80dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="#ededed"
                 android:scaleType="fitCenter"
                 app:srcCompat="@drawable/menuiconlari_01" />
+
+            <ImageButton
+                android:id="@+id/imageButton4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:adjustViewBounds="true"
+                android:background="#ededed"
+                android:scaleType="fitCenter"
+                app:srcCompat="@drawable/menuiconlari_15" />
 
             <ImageButton
                 android:id="@+id/imageButton3"
@@ -215,16 +268,6 @@
                 android:background="#ededed"
                 android:scaleType="fitCenter"
                 app:srcCompat="@drawable/menuiconlari_03" />
-
-            <ImageButton
-                android:id="@+id/imageButton4"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:adjustViewBounds="true"
-                android:background="#ededed"
-                android:scaleType="fitCenter"
-                app:srcCompat="@drawable/menuiconlari_05" />
 
         </LinearLayout>
 

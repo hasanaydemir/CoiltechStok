@@ -3,6 +3,7 @@ package cf.coiltech.com.stok;
  * Created by Hasan Aydemir 10.04.2018
  * */
 import android.Manifest;
+import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 
 import android.content.Intent;
@@ -31,7 +32,9 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -42,7 +45,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import cf.coiltech.com.stok.data.MySingleton;
@@ -56,16 +62,14 @@ public class MainActivity extends AppCompatActivity {
     // CONNECTION_TIMEOUT and READ_TIMEOUT are in milliseconds
     public static final int CONNECTION_TIMEOUT = 10000;
     public static final int READ_TIMEOUT = 15000;
-    Button veriListele;
-    Button scanbtn;
-    private EditText urunAra;
-    TextView urunAdi, urunID, urunMarka,adetLbl;
-    EditText urunAdet;
-    Button urunEkle;
-    private ProgressDialog pd;
+    Button veriListele,scanbtn,urunEkle,tarihButton;
+     private EditText urunAra;
+    TextView urunAdi, urunID, urunMarka,adetLbl,teslimTarihi;
+    EditText urunAdet,teslimAlan,uyfNo;
+     private ProgressDialog pd;
     String urunAydi;
     String ServerURL = "http://192.168.2.22/hm/api/urunEkle.php" ;
-    String TempUrunAdi, TempUrunAdet, TempUrunID;
+    String TempUrunAdi, TempUrunAdet, TempUrunID,TempTeslimAlan,TempTeslimTarihi,TempUyfNo;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -78,7 +82,8 @@ public class MainActivity extends AppCompatActivity {
         urunEkle = (Button) findViewById(R.id.urunEkle);
         urunAra = (EditText) findViewById(R.id.urunAra) ;
         adetLbl = (TextView) findViewById(R.id.adetLbl) ;
-
+        teslimAlan = (EditText) findViewById(R.id.teslimAlan);
+        uyfNo = (EditText) findViewById(R.id.uyfNo);
         pd = new ProgressDialog(MainActivity.this);
         pd.setMessage("Yükleniyor...");
         pd.setCancelable(false);
@@ -96,6 +101,23 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
+
+        //stock-take activity button action
+        ImageButton anaSayfaButton = (ImageButton) findViewById(R.id.anaSayfaButton);
+
+        //change activity by button
+        anaSayfaButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, AnaSayfa.class);
+                startActivityForResult(intent, RESULT_OK);
+            }
+        });
+
+
+
+
+        // DB filter textView watcher
         urunAra.addTextChangedListener(new TextWatcher() {
 
             @Override
@@ -121,11 +143,19 @@ public class MainActivity extends AppCompatActivity {
         });
 
         urunEkle.setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View view) {
-
+         if(urunAdet.getText().toString().equals("") || teslimTarihi.getText().toString().equals("") || teslimAlan.getText().toString().equals("")  || uyfNo.getText().toString().equals("")    )
+                {
+                    Toast.makeText(MainActivity.this,"Adet, Teslim Alan, UYF No ya da Tarih alanları boş bırakılamaz girmediniz!", Toast.LENGTH_LONG).show();
+                }
+               else {
                 GetData();
-                InsertData(TempUrunAdi, TempUrunAdet,TempUrunID);
+                  InsertData(TempUrunAdi, TempUrunAdet, TempUrunID,TempTeslimAlan,TempUyfNo,TempTeslimTarihi);
+
+                }
+
 
             }
         });
@@ -158,7 +188,45 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        //Add XML referans for Button and TextView
+        tarihButton = (Button) findViewById(R.id.tarihButton);
+        teslimTarihi = (TextView) findViewById(R.id.teslimTarihi);
+
+
+        tarihButton.setOnClickListener(new View.OnClickListener() {//tarihButona Click Listener ekliyoruz
+
+            @Override
+            public void onClick(View v) {
+                // TODO Auto-generated method stub
+                Calendar mcurrentTime = Calendar.getInstance();
+                int year = mcurrentTime.get(Calendar.YEAR);//current year
+                int month = mcurrentTime.get(Calendar.MONTH);//current month
+                int day = mcurrentTime.get(Calendar.DAY_OF_MONTH);//current month
+                 DatePickerDialog datePicker;//Datepicker object
+                datePicker = new DatePickerDialog(MainActivity.this, new DatePickerDialog.OnDateSetListener() {
+
+                    @Override
+                    public void onDateSet(DatePicker view, int year, int monthOfYear,
+                                          int dayOfMonth) {
+
+         int ay = monthOfYear+1;
+
+          teslimTarihi.setText( dayOfMonth + "/" + ay + "/"+year);//Click Ayarla button to write EditTExt
+
+                    }
+                },year,month,day);//set values on starting
+                datePicker.setTitle("Tarih Seçiniz");
+                datePicker.setButton(DatePickerDialog.BUTTON_POSITIVE, "Seç", datePicker);
+                datePicker.setButton(DatePickerDialog.BUTTON_NEGATIVE, "İptal", datePicker);
+                datePicker.show();
+
+            }
+        });
+
+
     }
+
+
 
 // Add value to temporary variable
     public void GetData(){
@@ -166,6 +234,9 @@ public class MainActivity extends AppCompatActivity {
         TempUrunAdi = urunAdi.getText().toString();
         TempUrunID = urunID.getText().toString();
         TempUrunAdet = urunAdet.getText().toString();
+        TempTeslimAlan = teslimAlan.getText().toString();
+        TempTeslimTarihi = teslimTarihi.getText().toString();
+        TempUyfNo = uyfNo.getText().toString();
 
     }
 
@@ -251,63 +322,72 @@ public class MainActivity extends AppCompatActivity {
     }
 
 // insert TextView and EditText values to database
-    public void InsertData(final String turunAdi, final String turunAdet, final String turunID){
+    public void InsertData(final String turunAdi, final String turunAdet, final String turunID, final String tteslimalan,final String tuyfno, final String tTeslimTarihi ){
 
-        class SendPostReqAsyncTask extends AsyncTask<String, Void, String> {
-            @Override
-            protected String doInBackground(String... params) {
+     class SendPostReqAsyncTask extends AsyncTask<String, Void, String> {
+        @Override
+        protected String doInBackground(String... params) {
 
-                String UrunAdiHolder = turunAdi ;
-                String UrunAdetHolder = turunAdet ;
-                String UrunIDHolder =  turunID;
+            String UrunAdiHolder = turunAdi;
+            String UrunAdetHolder = turunAdet;
+            String UrunIDHolder = turunID;
+            String TeslimAlanHolder = tteslimalan;
+            String TeslimTarihiHolder = tTeslimTarihi;
+            String UyfNoHolder = tuyfno;
 
-                List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+            List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 
-                nameValuePairs.add(new BasicNameValuePair("urunAdi", UrunAdiHolder));
-                nameValuePairs.add(new BasicNameValuePair("urunID", UrunIDHolder));
-                nameValuePairs.add(new BasicNameValuePair("urunAdet", UrunAdetHolder));
-
-
-                try {
-                    HttpClient httpClient = new DefaultHttpClient();
-
-                    HttpPost httpPost = new HttpPost(ServerURL);
-
-                    httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs,"UTF-8"));
-
-                    HttpResponse httpResponse = httpClient.execute(httpPost);
-
-                    HttpEntity httpEntity = httpResponse.getEntity();
+            nameValuePairs.add(new BasicNameValuePair("urunAdi", UrunAdiHolder));
+            nameValuePairs.add(new BasicNameValuePair("urunID", UrunIDHolder));
+            nameValuePairs.add(new BasicNameValuePair("urunAdet", UrunAdetHolder));
+            nameValuePairs.add(new BasicNameValuePair("teslimAlan", TeslimAlanHolder));
+            nameValuePairs.add(new BasicNameValuePair("teslimTarihi", TeslimTarihiHolder));
+            nameValuePairs.add(new BasicNameValuePair("uyfNo", UyfNoHolder));
 
 
-                } catch (ClientProtocolException e) {
+            try {
+                HttpClient httpClient = new DefaultHttpClient();
 
-                } catch (IOException e) {
+                HttpPost httpPost = new HttpPost(ServerURL);
 
-                }
-                return "Data Inserted Successfully";
-            }
+                httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs, "UTF-8"));
 
-            @Override
-            protected void onPostExecute(String result) {
+                HttpResponse httpResponse = httpClient.execute(httpPost);
 
-                super.onPostExecute(result);
-                urunMarka.setText("");
-                urunAdi.setText("");
-                urunID.setText("");
-                urunAdet.setText("");
-                urunAdet.setVisibility(View.INVISIBLE);
-                adetLbl.setVisibility(View.INVISIBLE);
-                urunEkle.setVisibility(View.INVISIBLE);
-                urunAra.setText("");
-                Toast.makeText(MainActivity.this, "Ürün başarıyla listeye eklendi", Toast.LENGTH_LONG).show();
+                HttpEntity httpEntity = httpResponse.getEntity();
+
+
+            } catch (ClientProtocolException e) {
+
+            } catch (IOException e) {
 
             }
+
+            return "Data Inserted Successfully";
+
         }
 
-        SendPostReqAsyncTask sendPostReqAsyncTask = new SendPostReqAsyncTask();
 
-        sendPostReqAsyncTask.execute(turunAdi,turunAdet,turunID);
+        @Override
+        protected void onPostExecute(String result) {
+
+            super.onPostExecute(result);
+            urunMarka.setText("");
+            urunAdi.setText("");
+            urunID.setText("");
+            urunAdet.setText("");
+            urunAdet.setVisibility(View.INVISIBLE);
+            adetLbl.setVisibility(View.INVISIBLE);
+            urunEkle.setVisibility(View.INVISIBLE);
+            urunAra.setText("");
+            Toast.makeText(MainActivity.this, "Ürün başarıyla listeye eklendi", Toast.LENGTH_LONG).show();
+
+        }
+    }
+
+
+        SendPostReqAsyncTask sendPostReqAsyncTask = new SendPostReqAsyncTask();
+         sendPostReqAsyncTask.execute(turunAdi,turunAdet,turunID);
     }
 
 

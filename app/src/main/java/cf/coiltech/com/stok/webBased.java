@@ -17,26 +17,26 @@ import android.app.ProgressDialog;
         setContentView(R.layout.activity_web_based);
 
 
-        // webView'i tasarımdakiyle bağlıyoruz.
+        // create webview object from layout
         webView = (WebView) findViewById(R.id.webView1);
 
         // webView'i JavaScript kodlarını çalıştıracak şekilde set ediyoruz.
         webView.getSettings().setJavaScriptEnabled(true);
 
-        // Sayfanın yüklendiğinin anlaşılması için ProgressDialog açıyoruz.
+        // create processdialog about page loading process
         final ProgressDialog progressDialog = ProgressDialog.show(this, "Coiltech Stok",
                 "Sayfa Yükleniyor...", true);
 
         webView.setWebViewClient(new WebViewClient() {
 
-            // Sayfa Yüklenirken bir hata oluşursa kullanıcıyı uyarıyoruz.
+            // Check error when loading page
             public void onReceivedError(WebView view, int errorCode,
                                         String description, String failingUrl) {
                 Toast.makeText(getApplicationContext(), "Sayfa Yüklenemedi!",
                         Toast.LENGTH_SHORT).show();
             }
 
-            // Sayfanın yüklenme işlemi bittiğinde progressDialog'u kapatıyoruz.
+            // close process dialog when open page without error
             @Override
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
@@ -45,7 +45,7 @@ import android.app.ProgressDialog;
             }
         });
 
-        //Web sayfamızın url'ini webView'e yüklüyoruz.
+        //load URL in webview object
         webView.loadUrl("http://192.168.2.22/up/sayimci.html");
 
     }
