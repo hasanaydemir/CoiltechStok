@@ -160,7 +160,7 @@ public class SayimLists extends AppCompatActivity implements SwipeRefreshLayout.
         veriAktar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                stokAktar();
+                confirmStokAktar();
 
              }
         });
@@ -509,5 +509,28 @@ public class SayimLists extends AppCompatActivity implements SwipeRefreshLayout.
 
         AppController.getInstance().addToRequestQueue(strReq, tag_json_obj);
     }
+
+
+//confirmation for stok aktar
+    private void confirmStokAktar() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        builder
+                .setMessage("Veriler aktarılıp, listeden silinecek emin misin?")
+                .setPositiveButton("Evet",  new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
+                        stokAktar();
+                    }
+                })
+                .setNegativeButton("Hayır", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog,int id) {
+                        dialog.cancel();
+                    }
+                })
+                .show();
+    }
+
 
 }

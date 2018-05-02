@@ -32,19 +32,22 @@ public class ScanActivity extends AppCompatActivity {
         cameraView = (SurfaceView) findViewById(R.id.cameraView);
         cameraView.setZOrderMediaOverlay(true);
         holder = cameraView.getHolder();
-        barcode = new BarcodeDetector.Builder(this)
+
+        BarcodeDetector  barcode = new BarcodeDetector.Builder(this)
                 //This line most important about recognize barcode types.
-                .setBarcodeFormats(Barcode.ALL_FORMATS)
+                .setBarcodeFormats(Barcode.QR_CODE)
                 .build();
+
+
         if(!barcode.isOperational()){
             Toast.makeText(getApplicationContext(), "Kamera hazırlanamadi", Toast.LENGTH_LONG).show();
             this.finish();
         }
         cameraSource = new CameraSource.Builder(this, barcode)
                 .setFacing(CameraSource.CAMERA_FACING_BACK)
-                .setRequestedFps(24)
                 .setAutoFocusEnabled(true)
-                .setRequestedPreviewSize(1920,1024)
+                .setRequestedPreviewSize(1600, 1024)
+                .setRequestedFps(15.0f)
                 .build();
         cameraView.getHolder().addCallback(new SurfaceHolder.Callback() {
             @Override
@@ -76,6 +79,8 @@ public class ScanActivity extends AppCompatActivity {
             }
 
             @Override
+
+
             public void receiveDetections(Detector.Detections<Barcode> detections) {
                 final SparseArray<Barcode> barcodes =  detections.getDetectedItems();
                 if(barcodes.size() > 0){

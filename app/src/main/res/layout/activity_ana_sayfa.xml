@@ -94,14 +94,14 @@
 
     <TextView
         android:id="@+id/copyright"
-        android:layout_width="356dp"
+        android:layout_width="0dp"
         android:layout_height="19dp"
-        android:layout_marginBottom="8dp"
+        android:layout_marginBottom="4dp"
         android:gravity="center_horizontal"
         android:text="Coiltech IT 2018"
         android:textColor="@color/list_row_hover_end_color"
         android:textSize="10sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        tools:layout_editor_absoluteX="2dp" />
+        tools:layout_editor_absoluteX="144dp" />
 
 </android.support.constraint.ConstraintLayout>

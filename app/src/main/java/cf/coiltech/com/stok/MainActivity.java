@@ -8,6 +8,8 @@ import android.app.ProgressDialog;
 
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -35,16 +37,20 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.vision.barcode.Barcode;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -66,6 +72,7 @@ public class MainActivity extends AppCompatActivity {
      private EditText urunAra;
     TextView urunAdi, urunID, urunMarka,adetLbl,teslimTarihi;
     EditText urunAdet,teslimAlan,uyfNo;
+    ImageView urunResmi;
      private ProgressDialog pd;
     String urunAydi;
     String ServerURL = "http://192.168.2.22/hm/api/urunEkle.php" ;
@@ -84,6 +91,7 @@ public class MainActivity extends AppCompatActivity {
         adetLbl = (TextView) findViewById(R.id.adetLbl) ;
         teslimAlan = (EditText) findViewById(R.id.teslimAlan);
         uyfNo = (EditText) findViewById(R.id.uyfNo);
+        urunResmi= (ImageView) findViewById(R.id.urunResmi);
         pd = new ProgressDialog(MainActivity.this);
         pd.setMessage("Yükleniyor...");
         pd.setCancelable(false);
@@ -293,15 +301,21 @@ public class MainActivity extends AppCompatActivity {
                                 String id = jsonobject.getString("id");
                                 String brand = jsonobject.getString("marka");
                                 String isim = jsonobject.getString("model");
+                                String kucukResim = jsonobject.getString("kucuk_resim");
+                                String imgURL ="http://192.168.2.22/hm/"+kucukResim;
                                 urunAdi.setText(isim);
                                 urunID.setText(id);
                                 urunMarka.setText(brand);
+                                Picasso.get().load("http://192.168.2.22/hm/"+kucukResim).into(urunResmi);
+
+                                //new DownLoadImageTask(urunResmi).execute(imgURL);
+
  if(urunAdi.toString()!="") {
 
      urunAdet.setVisibility(View.VISIBLE);
      adetLbl.setVisibility(View.VISIBLE);
      urunEkle.setVisibility(View.VISIBLE);
-
+     urunResmi.setVisibility(View.VISIBLE);
  }
 
                             }
@@ -400,10 +414,43 @@ public class MainActivity extends AppCompatActivity {
          sendPostReqAsyncTask.execute(turunAdi,turunAdet,turunID);
     }
 
+    private class DownLoadImageTask extends AsyncTask<String,Void,Bitmap>{
+        ImageView imageView;
 
+        public DownLoadImageTask(ImageView imageView){
+            this.imageView = imageView;
+        }
 
+        /*
+            doInBackground(Params... params)
+                Override this method to perform a computation on a background thread.
+         */
+        protected Bitmap doInBackground(String...urls){
+            String urlOfImage = urls[0];
+            Bitmap logo = null;
+            try{
+                InputStream is = new URL(urlOfImage).openStream();
+                /*
+                    decodeStream(InputStream is)
+                        Decode an input stream into a bitmap.
+                 */
+                logo = BitmapFactory.decodeStream(is);
+            }catch(Exception e){ // Catch the download exception
+                e.printStackTrace();
+            }
+            return logo;
+        }
 
+        /*
+            onPostExecute(Result result)
+                Runs on the UI thread after doInBackground(Params...).
+         */
+        protected void onPostExecute(Bitmap result){
+            imageView.setImageBitmap(result);
+        }
+    }
 }
+
 
 
 

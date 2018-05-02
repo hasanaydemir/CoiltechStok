@@ -155,6 +155,7 @@ public class DataLists extends AppCompatActivity implements SwipeRefreshLayout.O
 
         Button veriAktar = (Button) findViewById(R.id.veriAktar);
 
+       /*
         //change activity by button
         veriAktar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -163,6 +164,20 @@ public class DataLists extends AppCompatActivity implements SwipeRefreshLayout.O
 
              }
         });
+
+*/
+        // dialogform for confirmation "ÇIKIŞI GERKÇEKLEŞTİR" button action
+
+        veriAktar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                confirmVeriAktar();
+
+            }
+        });
+
+
+
 
 
 
@@ -508,5 +523,31 @@ public class DataLists extends AppCompatActivity implements SwipeRefreshLayout.O
 
         AppController.getInstance().addToRequestQueue(strReq, tag_json_obj);
     }
+
+
+
+
+    private void confirmVeriAktar() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        builder
+                .setMessage("Veriler aktarılıp, listeden silinecek emin misin?")
+                .setPositiveButton("Evet",  new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
+                        stokAktar();
+                    }
+                })
+                .setNegativeButton("Hayır", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog,int id) {
+                        dialog.cancel();
+                    }
+                })
+                .show();
+    }
+
+
+
 
 }
