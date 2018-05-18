@@ -8,6 +8,8 @@ import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
@@ -20,6 +22,7 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,6 +31,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.google.android.gms.vision.barcode.Barcode;
+import com.squareup.picasso.Picasso;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -43,6 +47,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -50,86 +56,46 @@ import java.util.List;
 import cf.coiltech.com.stok.data.MySingleton;
 
 
-public class SayimActivity extends AppCompatActivity {
+public class UrunDetayActivity extends AppCompatActivity {
 
     public static final int REQUEST_CODE = 100;
     public static final int PERMISSION_REQUEST = 200;
 
-
-    Button veriListele,scanbtn,urunEkle,tarihButton;
+    // CONNECTION_TIMEOUT and READ_TIMEOUT are in milliseconds
+    public static final int CONNECTION_TIMEOUT = 10000;
+    public static final int READ_TIMEOUT = 15000;
+    Button urunEkle;
      private EditText urunAra;
-    TextView urunAdi, urunID, urunMarka,adetLbl,teslimTarihi;
+    TextView urunAdi, urunID, urunMarka,adetLbl;
     EditText urunAdet;
+    ImageView urunResmi;
      private ProgressDialog pd;
     String urunAydi;
-    String ServerURL = "http://192.168.2.22/hm/api/sayim/sayimEkle.php" ;
-    String TempUrunAdi, TempUrunAdet, TempUrunID,TempTeslimTarihi;
+    String ServerURL = "http://192.168.2.22/hm/api/urunEkle.php" ;
+    String TempUrunAdi, TempUrunAdet, TempUrunID;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_sayim);
+        setContentView(R.layout.activity_urun_detay);
         //Create objects for database select and insert process
         urunMarka = (TextView) findViewById(R.id.urunMarka) ;
         urunAdi = (TextView) findViewById(R.id.urunAdi) ;
         urunID = (TextView) findViewById(R.id.urunID) ;
-        urunAdet = (EditText) findViewById(R.id.urunAdet) ;
         urunEkle = (Button) findViewById(R.id.urunEkle);
         urunAra = (EditText) findViewById(R.id.urunAra) ;
         adetLbl = (TextView) findViewById(R.id.adetLbl) ;
 
-        pd = new ProgressDialog(SayimActivity.this);
+
+
+
+        urunResmi= (ImageView) findViewById(R.id.urunResmi);
+        pd = new ProgressDialog(UrunDetayActivity.this);
         pd.setMessage("Yükleniyor...");
         pd.setCancelable(false);
         pd.setCanceledOnTouchOutside(false);
 
-        scanbtn = (Button) findViewById(R.id.scanbtn);
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, PERMISSION_REQUEST);
-        scanbtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(SayimActivity.this, ScanActivity.class);
-                startActivityForResult(intent, REQUEST_CODE);
-            }
-        });
 
 
-
-        //stock-take activity button action
-        ImageButton anaSSayfaButton = (ImageButton) findViewById(R.id.anaSSayfaButton);
-
-        //change activity by button
-        anaSSayfaButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(SayimActivity.this, AnaSayfa.class);
-                startActivityForResult(intent, RESULT_OK);
-            }
-        });
-
-        //stock-take activity button action
-        ImageButton cikisYYapButton = (ImageButton) findViewById(R.id.cikisYYapButton);
-
-        //change activity by button
-        cikisYYapButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(SayimActivity.this, CikisYapActivity.class);
-                startActivityForResult(intent, RESULT_OK);
-            }
-        });
-
-        //change activity for search activity
-
-        ImageButton urunAraButton = (ImageButton) findViewById(R.id.urunAraButton);
-        //change activity by button
-        urunAraButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(SayimActivity.this, RemoteSearchActivity.class);
-                startActivityForResult(intent, RESULT_OK);
-            }
-        });
 
 
         // DB filter textView watcher
@@ -137,12 +103,12 @@ public class SayimActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-
-                if(s.length() > 2) {
+/*
+                if(s.length()>2) {
                     urunAydi = urunAra.getText().toString().trim();
-
                     getSqlDetails();
                 }
+*/
             }
 
             @Override
@@ -153,6 +119,7 @@ public class SayimActivity extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence s, int start,
                                       int before, int count) {
+
             }
         });
 
@@ -160,71 +127,24 @@ public class SayimActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View view) {
-         if(urunAdet.getText().toString().equals("") || teslimTarihi.getText().toString().equals("")     )
+         if(urunAdet.getText().toString().equals("")     )
                 {
-                    Toast.makeText(SayimActivity.this,"Adet, Teslim Alan, UYF No ya da Tarih alanları boş bırakılamaz girmediniz!", Toast.LENGTH_LONG).show();
+                    Toast.makeText(UrunDetayActivity.this,"Adet, Teslim Alan, UYF No ya da Tarih alanları boş bırakılamaz girmediniz!", Toast.LENGTH_LONG).show();
                 }
                else {
                 GetData();
-                  InsertData(TempUrunAdi, TempUrunAdet,TempUrunID,TempTeslimTarihi);
+                  InsertData(TempUrunAdi, TempUrunAdet, TempUrunID);
 
                 }
 
-
-            }
+             }
         });
 
 
+        urunAydi = getIntent().getExtras().getString("urunID").trim();
 
-
-
-        //listele button action
-        Button veriListele = (Button) findViewById(R.id.veriListele);
-
-        //change activity by floating button
-        veriListele.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(SayimActivity.this,SayimLists.class);
-                startActivityForResult(intent, RESULT_OK);
-            }
-        });
-
-        //Add XML referans for Button and TextView
-        tarihButton = (Button) findViewById(R.id.tarihButton);
-        teslimTarihi = (TextView) findViewById(R.id.teslimTarihi);
-
-
-        tarihButton.setOnClickListener(new View.OnClickListener() {//tarihButona Click Listener ekliyoruz
-
-            @Override
-            public void onClick(View v) {
-                // TODO Auto-generated method stub
-                Calendar mcurrentTime = Calendar.getInstance();
-                int year = mcurrentTime.get(Calendar.YEAR);//current year
-                int month = mcurrentTime.get(Calendar.MONTH);//current month
-                int day = mcurrentTime.get(Calendar.DAY_OF_MONTH);//current month
-                 DatePickerDialog datePicker;//Datepicker object
-                datePicker = new DatePickerDialog(SayimActivity.this, new DatePickerDialog.OnDateSetListener() {
-
-                    @Override
-                    public void onDateSet(DatePicker view, int year, int monthOfYear,
-                                          int dayOfMonth) {
-
-         int ay = monthOfYear+1;
-
-          teslimTarihi.setText( dayOfMonth + "/" + ay + "/"+year);//Click Ayarla button to write EditTExt
-
-                    }
-                },year,month,day);//set values on starting
-                datePicker.setTitle("Tarih Seçiniz");
-                datePicker.setButton(DatePickerDialog.BUTTON_POSITIVE, "Seç", datePicker);
-                datePicker.setButton(DatePickerDialog.BUTTON_NEGATIVE, "İptal", datePicker);
-                datePicker.show();
-
-            }
-        });
-
+        urunAra.setText(urunAydi);
+        getSqlDetails();
 
     }
 
@@ -236,31 +156,15 @@ public class SayimActivity extends AppCompatActivity {
         TempUrunAdi = urunAdi.getText().toString();
         TempUrunID = urunID.getText().toString();
         TempUrunAdet = urunAdet.getText().toString();
-        TempTeslimTarihi = teslimTarihi.getText().toString();
 
     }
 
-//QR code value setText filter TextView
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == REQUEST_CODE && resultCode == RESULT_OK) {
-            if (data != null) {
-                final Barcode barcode = data.getParcelableExtra("barcode");
-                urunAra.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        urunAra.setText(barcode.displayValue);
 
-                    }
-                });
-            }
-        }
-    }
 
     // DB filter by QR Code value
     private void getSqlDetails() {
 
-        String url= "http://192.168.2.22/hm/api/urunArar.php?searchQuery="+urunAydi;
+        String url= String.format("http://192.168.2.22/hm/api/urunArar.php?searchQuery="+urunAydi);
         pd.show();
         StringRequest stringRequest = new StringRequest(Request.Method.GET,
                 url,
@@ -283,15 +187,20 @@ public class SayimActivity extends AppCompatActivity {
                                 String id = jsonobject.getString("id");
                                 String brand = jsonobject.getString("marka");
                                 String isim = jsonobject.getString("model");
+                                String kucukResim = jsonobject.getString("kucuk_resim");
+                                String imgURL ="http://192.168.2.22/hm/"+kucukResim;
                                 urunAdi.setText(isim);
                                 urunID.setText(id);
                                 urunMarka.setText(brand);
+                                Picasso.get().load("http://192.168.2.22/hm/"+kucukResim).into(urunResmi);
+
+                                //new DownLoadImageTask(urunResmi).execute(imgURL);
+
  if(urunAdi.toString()!="") {
 
-     urunAdet.setVisibility(View.VISIBLE);
-     adetLbl.setVisibility(View.VISIBLE);
+      adetLbl.setVisibility(View.VISIBLE);
      urunEkle.setVisibility(View.VISIBLE);
-
+     urunResmi.setVisibility(View.VISIBLE);
  }
 
                             }
@@ -322,7 +231,7 @@ public class SayimActivity extends AppCompatActivity {
     }
 
 // insert TextView and EditText values to database
-    public void InsertData(final String turunAdi, final String turunAdet, final String turunID, final String tTeslimTarihi ){
+    public void InsertData(final String turunAdi, final String turunAdet, final String turunID){
 
      class SendPostReqAsyncTask extends AsyncTask<String, Void, String> {
         @Override
@@ -331,14 +240,12 @@ public class SayimActivity extends AppCompatActivity {
             String UrunAdiHolder = turunAdi;
             String UrunAdetHolder = turunAdet;
             String UrunIDHolder = turunID;
-            String TeslimTarihiHolder = tTeslimTarihi;
 
             List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 
             nameValuePairs.add(new BasicNameValuePair("urunAdi", UrunAdiHolder));
             nameValuePairs.add(new BasicNameValuePair("urunID", UrunIDHolder));
             nameValuePairs.add(new BasicNameValuePair("urunAdet", UrunAdetHolder));
-            nameValuePairs.add(new BasicNameValuePair("teslimTarihi", TeslimTarihiHolder));
 
 
             try {
@@ -376,7 +283,7 @@ public class SayimActivity extends AppCompatActivity {
             adetLbl.setVisibility(View.INVISIBLE);
             urunEkle.setVisibility(View.INVISIBLE);
             urunAra.setText("");
-            Toast.makeText(SayimActivity.this, "Ürün başarıyla listeye eklendi", Toast.LENGTH_LONG).show();
+            Toast.makeText(UrunDetayActivity.this, "Ürün başarıyla listeye eklendi", Toast.LENGTH_LONG).show();
 
         }
     }
@@ -386,10 +293,43 @@ public class SayimActivity extends AppCompatActivity {
          sendPostReqAsyncTask.execute(turunAdi,turunAdet,turunID);
     }
 
+    private class DownLoadImageTask extends AsyncTask<String,Void,Bitmap>{
+        ImageView imageView;
 
+        public DownLoadImageTask(ImageView imageView){
+            this.imageView = imageView;
+        }
 
+        /*
+            doInBackground(Params... params)
+                Override this method to perform a computation on a background thread.
+         */
+        protected Bitmap doInBackground(String...urls){
+            String urlOfImage = urls[0];
+            Bitmap logo = null;
+            try{
+                InputStream is = new URL(urlOfImage).openStream();
+                /*
+                    decodeStream(InputStream is)
+                        Decode an input stream into a bitmap.
+                 */
+                logo = BitmapFactory.decodeStream(is);
+            }catch(Exception e){ // Catch the download exception
+                e.printStackTrace();
+            }
+            return logo;
+        }
 
+        /*
+            onPostExecute(Result result)
+                Runs on the UI thread after doInBackground(Params...).
+         */
+        protected void onPostExecute(Bitmap result){
+            imageView.setImageBitmap(result);
+        }
+    }
 }
+
 
 
 

@@ -30,7 +30,7 @@
 
                 <ImageView
                     android:id="@+id/imageView"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="57dp"
                     android:layout_weight="1"
                     android:paddingBottom="5dp"
@@ -45,19 +45,19 @@
     </android.support.design.widget.AppBarLayout>
 
     <RelativeLayout
-        android:id="@+id/activity_sayim"
+        android:id="@+id/activity_arama"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingBottom="0dp"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
         android:paddingTop="60dp"
-        tools:context="cf.coiltech.com.stok.SayimActivity">
+        tools:context="cf.coiltech.com.stok.AramaActivity">
 
 
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:tools="http://schemas.android.com/tools"
-            android:id="@+id/activity_sayim"
+            android:id="@+id/activity_arama"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_alignParentBottom="true"
@@ -67,23 +67,23 @@
             android:paddingLeft="0dp"
             android:paddingRight="0dp"
             android:paddingTop="0dp"
-            tools:context="cf.coiltech.com.stok.SayimActivity">
+            tools:context="cf.coiltech.com.stok.AramaActivity">
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
+                android:layout_height="80dp"
                 android:orientation="vertical">
 
                 <TextView
                     android:id="@+id/textView5"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="85dp"
                     android:layout_weight="3"
                     android:clickable="false"
                     android:editable="false"
                     android:enabled="false"
                     android:paddingTop="10dp"
-                    android:text="Sayım İşlemleri"
+                    android:text="Ürün Arama"
                     android:textColor="@color/cast_expanded_controller_progress_text_color"
                     android:textSize="24sp" />
 
@@ -91,26 +91,26 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="55dp"
-                android:orientation="horizontal">
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingTop="20dp">
 
                 <EditText
-                    android:id="@+id/teslimTarihi"
+                    android:id="@+id/urunAdi"
                     android:layout_width="200dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:ems="10"
-                    android:hint="Tarih Giriniz"
-                    android:inputType="date" />
+                    android:layout_weight="3"
+                    android:enabled="true"
+                    android:textColor="@color/cast_libraries_material_featurehighlight_text_header_color"
+                    android:textColorLink="@color/accent_material_light_1"
+                    android:textSize="18sp"
+                    android:visibility="visible" />
 
                 <Button
-                    android:id="@+id/tarihButton"
+                    android:id="@+id/araButton"
                     android:layout_width="50dp"
                     android:layout_height="50dp"
-                    android:background="@drawable/calendar"
-                    android:onClick="showDatePickerDialog" />
-                />
-
+                    android:background="@drawable/places_ic_search" />
             </LinearLayout>
 
             <LinearLayout
@@ -147,14 +147,8 @@
                     android:id="@+id/urunMarka"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textSize="14sp" />
-
-                <TextView
-                    android:id="@+id/urunAdi"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textColor="@android:color/background_light"
-                    android:textSize="18sp" />
+                    android:textSize="14sp"
+                    android:visibility="visible" />
 
                 <TextView
                     android:id="@+id/urunID"
@@ -162,45 +156,55 @@
                     android:layout_height="wrap_content"
                     android:clickable="false"
                     android:visibility="gone"
-                    tools:visibility="invisible" />
+                    tools:visibility="visible" />
+
+                <LinearLayout
+                    android:layout_width="240dp"
+                    android:layout_height="240dp"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:id="@+id/urunResmi"
+                        android:layout_width="match_parent"
+                        android:layout_height="178dp"
+                        android:layout_weight="1"
+                        android:visibility="gone"
+                        app:srcCompat="@drawable/cast_ic_mini_controller_stop_large" />
+                </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="76dp"
                     android:orientation="horizontal">
 
-                    <TextView
-                        android:id="@+id/adetLbl"
-                        android:layout_width="159dp"
-                        android:layout_height="31dp"
-                        android:layout_weight="1"
-                        android:text="Adet :"
-                        android:visibility="gone" />
-
-                    <EditText
-                        android:id="@+id/urunAdet"
+                    <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="match_parent"
                         android:layout_weight="1"
-                        android:ems="10"
-                        android:inputType="number"
-                        android:textColorLink="@color/list_row_hover_start_color"
-                        android:visibility="gone" />
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/adetLbl"
+                            android:layout_width="match_parent"
+                            android:layout_height="31dp"
+                            android:layout_weight="1"
+                            android:text="Adet :"
+                            android:visibility="gone" />
+
+                        <EditText
+                            android:id="@+id/urunAdet"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:ems="10"
+                            android:inputType="number"
+                            android:textColorLink="@color/list_row_hover_start_color"
+                            android:visibility="gone" />
+                    </LinearLayout>
+
                 </LinearLayout>
 
-                <Button
-                    android:id="@+id/urunEkle"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Ekle"
-                    android:textColor="@color/cast_libraries_material_featurehighlight_text_body_color"
-                    android:visibility="gone" />
 
-                <Button
-                    android:id="@+id/veriListele"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Sayımı Listele" />
 
             </LinearLayout>
 
@@ -223,7 +227,7 @@
             android:orientation="horizontal">
 
             <ImageButton
-                android:id="@+id/anaSSayfaButton"
+                android:id="@+id/anaSayfaButton"
                 android:layout_width="80dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
@@ -232,34 +236,24 @@
                 app:srcCompat="@drawable/menuiconlari_01" />
 
             <ImageButton
-                android:id="@+id/urunAraButton"
+                android:id="@+id/imageButton4"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:adjustViewBounds="true"
                 android:background="#ededed"
                 android:scaleType="fitCenter"
-                app:srcCompat="@drawable/urun_ara_1" />
+                app:srcCompat="@drawable/menuiconlari_15" />
 
             <ImageButton
-                android:id="@+id/cikisYYapButton"
+                android:id="@+id/sayimYapButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:adjustViewBounds="true"
                 android:background="#ededed"
                 android:scaleType="fitCenter"
-                app:srcCompat="@drawable/menuiconlari_05" />
-
-            <ImageButton
-                android:id="@+id/imageButton3"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:adjustViewBounds="true"
-                android:background="#ededed"
-                android:scaleType="fitCenter"
-                app:srcCompat="@drawable/menuiconlari_12" />
+                app:srcCompat="@drawable/menuiconlari_03" />
 
         </LinearLayout>
 

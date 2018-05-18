@@ -22,7 +22,7 @@ public class AdapterStock extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     DataStock current;
     int currentPos=0;
 
-    // create constructor to initialize context and data sent from MainActivity
+    // create constructor to initialize context and data sent from CikisYapActivity
     public AdapterStock(Context context, List<DataStock> data){
         this.context=context;
         inflater= LayoutInflater.from(context);

@@ -1,5 +1,11 @@
 <resources>
     <string name="app_name">Coiltech Stok</string>
-    <string name="action_settings">Settings</string>
 
+    <string name="action_settings">Ayarlama</string>
+    <string name="activity_local_search">Yerel Arama</string>
+    <string name="activity_remote_search">Ürün Arama</string>
+    <string name="hint_search">Ürün adı yazınız</string>
+    <string name="coiltech_it_2018">Coiltech IT 2018</string>
+    <string name="todo">TODO</string>
 </resources>
+

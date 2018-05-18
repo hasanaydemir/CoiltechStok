@@ -51,16 +51,14 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 import cf.coiltech.com.stok.data.MySingleton;
 
 
-public class MainActivity extends AppCompatActivity {
+public class CikisYapActivity extends AppCompatActivity {
 
     public static final int REQUEST_CODE = 100;
     public static final int PERMISSION_REQUEST = 200;
@@ -80,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_cikis_yap);
         //Create objects for database select and insert process
         urunMarka = (TextView) findViewById(R.id.urunMarka) ;
         urunAdi = (TextView) findViewById(R.id.urunAdi) ;
@@ -92,7 +90,7 @@ public class MainActivity extends AppCompatActivity {
         teslimAlan = (EditText) findViewById(R.id.teslimAlan);
         uyfNo = (EditText) findViewById(R.id.uyfNo);
         urunResmi= (ImageView) findViewById(R.id.urunResmi);
-        pd = new ProgressDialog(MainActivity.this);
+        pd = new ProgressDialog(CikisYapActivity.this);
         pd.setMessage("Yükleniyor...");
         pd.setCancelable(false);
         pd.setCanceledOnTouchOutside(false);
@@ -103,7 +101,7 @@ public class MainActivity extends AppCompatActivity {
         scanbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, ScanActivity.class);
+                Intent intent = new Intent(CikisYapActivity.this, ScanActivity.class);
                 startActivityForResult(intent, REQUEST_CODE);
             }
         });
@@ -117,7 +115,7 @@ public class MainActivity extends AppCompatActivity {
         anaSayfaButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, AnaSayfa.class);
+                Intent intent = new Intent(CikisYapActivity.this, AnaSayfa.class);
                 startActivityForResult(intent, RESULT_OK);
             }
         });
@@ -129,7 +127,19 @@ public class MainActivity extends AppCompatActivity {
         sayimYapButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, SayimActivity.class);
+                Intent intent = new Intent(CikisYapActivity.this, SayimActivity.class);
+                startActivityForResult(intent, RESULT_OK);
+            }
+        });
+
+        //change activity for search activity
+
+        ImageButton urunAraButton = (ImageButton) findViewById(R.id.urunAraButton);
+        //change activity by button
+        urunAraButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(CikisYapActivity.this, RemoteSearchActivity.class);
                 startActivityForResult(intent, RESULT_OK);
             }
         });
@@ -166,7 +176,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
          if(urunAdet.getText().toString().equals("") || teslimTarihi.getText().toString().equals("") || teslimAlan.getText().toString().equals("")  || uyfNo.getText().toString().equals("")    )
                 {
-                    Toast.makeText(MainActivity.this,"Adet, Teslim Alan, UYF No ya da Tarih alanları boş bırakılamaz girmediniz!", Toast.LENGTH_LONG).show();
+                    Toast.makeText(CikisYapActivity.this,"Adet, Teslim Alan, UYF No ya da Tarih alanları boş bırakılamaz girmediniz!", Toast.LENGTH_LONG).show();
                 }
                else {
                 GetData();
@@ -187,7 +197,7 @@ public class MainActivity extends AppCompatActivity {
         kayarButon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, DataLists.class);
+                Intent intent = new Intent(CikisYapActivity.this, DataLists.class);
                 startActivityForResult(intent, RESULT_OK);
             }
         });
@@ -201,7 +211,7 @@ public class MainActivity extends AppCompatActivity {
         veriListele.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, DataLists.class);
+                Intent intent = new Intent(CikisYapActivity.this, DataLists.class);
                 startActivityForResult(intent, RESULT_OK);
             }
         });
@@ -221,7 +231,7 @@ public class MainActivity extends AppCompatActivity {
                 int month = mcurrentTime.get(Calendar.MONTH);//current month
                 int day = mcurrentTime.get(Calendar.DAY_OF_MONTH);//current month
                  DatePickerDialog datePicker;//Datepicker object
-                datePicker = new DatePickerDialog(MainActivity.this, new DatePickerDialog.OnDateSetListener() {
+                datePicker = new DatePickerDialog(CikisYapActivity.this, new DatePickerDialog.OnDateSetListener() {
 
                     @Override
                     public void onDateSet(DatePicker view, int year, int monthOfYear,
@@ -404,7 +414,7 @@ public class MainActivity extends AppCompatActivity {
             adetLbl.setVisibility(View.INVISIBLE);
             urunEkle.setVisibility(View.INVISIBLE);
             urunAra.setText("");
-            Toast.makeText(MainActivity.this, "Ürün başarıyla listeye eklendi", Toast.LENGTH_LONG).show();
+            Toast.makeText(CikisYapActivity.this, "Ürün başarıyla listeye eklendi", Toast.LENGTH_LONG).show();
 
         }
     }

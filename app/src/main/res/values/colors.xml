@@ -9,4 +9,7 @@
     <color name="list_row_end_color">#ccc</color>
     <color name="list_row_hover_start_color">#b6b4af</color>
     <color name="list_row_hover_end_color">#b6b4af</color>
+
+    <color name="contact_name">#333333</color>
+    <color name="contact_number">#8c8c8c</color>
 </resources>

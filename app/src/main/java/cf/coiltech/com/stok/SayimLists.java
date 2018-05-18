@@ -146,7 +146,7 @@ public class SayimLists extends AppCompatActivity implements SwipeRefreshLayout.
         barcodeGeriDon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                /*Intent intent = new Intent(DataLists.this, MainActivity.class);
+                /*Intent intent = new Intent(DataLists.this, CikisYapActivity.class);
                 startActivityForResult(intent, RESULT_OK); */
                 //i use finish for turn back barcode read & DB filter activity
                 finish();

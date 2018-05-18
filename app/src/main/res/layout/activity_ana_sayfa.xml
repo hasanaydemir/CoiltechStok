@@ -10,7 +10,7 @@
     <android.support.design.widget.AppBarLayout
         android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="57dp"
         android:theme="@style/AppTheme.AppBarOverlay">
 
         <android.support.design.widget.AppBarLayout
@@ -40,11 +40,12 @@
                     <ImageView
                         android:id="@+id/imageView"
                         android:layout_width="match_parent"
-                        android:layout_height="57dp"
+                        android:layout_height="match_parent"
                         android:layout_weight="1"
+                        android:contentDescription="@string/todo"
                         android:paddingBottom="5dp"
-                        android:paddingLeft="0dp"
-                        android:paddingRight="5dp"
+                        android:paddingEnd="5dp"
+                        android:paddingStart="0dp"
                         android:paddingTop="5dp"
                         app:srcCompat="@drawable/banner" />
 
@@ -56,12 +57,10 @@
     </android.support.design.widget.AppBarLayout>
 
     <LinearLayout
-        android:layout_width="344dp"
-        android:layout_height="190dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:gravity="center_vertical"
@@ -72,6 +71,17 @@
         app:layout_constraintTop_toBottomOf="@+id/appBarLayout">
 
         <ImageButton
+            android:id="@+id/urunAraButton"
+            android:layout_width="162dp"
+            android:layout_height="149dp"
+            android:layout_weight="1"
+            android:contentDescription="TODO"
+            android:scaleType="fitCenter"
+            app:srcCompat="@drawable/urun_ara_1"
+            tools:layout_editor_absoluteX="290dp"
+            tools:layout_editor_absoluteY="39dp" />
+
+        <ImageButton
             android:id="@+id/cikisYapButton"
             android:layout_width="160dp"
             android:layout_height="149dp"
@@ -79,7 +89,8 @@
             android:scaleType="fitCenter"
             app:srcCompat="@drawable/menuiconlari_15"
             tools:layout_editor_absoluteX="0dp"
-            tools:layout_editor_absoluteY="0dp" />
+            tools:layout_editor_absoluteY="0dp"
+            android:contentDescription="TODO" />
 
         <ImageButton
             android:id="@+id/sayimYYYapButton"
@@ -89,19 +100,23 @@
             android:scaleType="fitCenter"
             app:srcCompat="@drawable/menuiconlari_03"
             tools:layout_editor_absoluteX="290dp"
-            tools:layout_editor_absoluteY="39dp" />
+            tools:layout_editor_absoluteY="39dp"
+            android:contentDescription="TODO" />
+
     </LinearLayout>
 
     <TextView
         android:id="@+id/copyright"
-        android:layout_width="0dp"
-        android:layout_height="19dp"
-        android:layout_marginBottom="4dp"
         android:gravity="center_horizontal"
-        android:text="Coiltech IT 2018"
+        android:text="@string/coiltech_it_2018"
         android:textColor="@color/list_row_hover_end_color"
-        android:textSize="10sp"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:autoSizeTextType="uniform"
+        android:autoSizePresetSizes="@dimens/autosize_text_sizes"
         app:layout_constraintBottom_toBottomOf="parent"
-        tools:layout_editor_absoluteX="144dp" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
 
 </android.support.constraint.ConstraintLayout>
