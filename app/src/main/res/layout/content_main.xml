@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@color/cast_intro_overlay_background_color"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="cf.coiltech.com.stok.DataLists"
+    tools:context="cf.coiltech.com.stok.CikisLists"
     tools:showIn="@layout/activity_data_lists">
 
     <android.support.v4.widget.SwipeRefreshLayout

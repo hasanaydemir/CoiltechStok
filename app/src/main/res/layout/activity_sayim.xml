@@ -55,29 +55,21 @@
         tools:context="cf.coiltech.com.stok.SayimActivity">
 
 
-        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:tools="http://schemas.android.com/tools"
-            android:id="@+id/activity_sayim"
+        <LinearLayout
+            android:id="@+id/layout_sayimyap"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentStart="true"
-            android:orientation="vertical"
-            android:paddingBottom="0dp"
-            android:paddingLeft="0dp"
-            android:paddingRight="0dp"
-            android:paddingTop="0dp"
-            tools:context="cf.coiltech.com.stok.SayimActivity">
+            android:orientation="vertical">
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
+                android:layout_height="57dp"
                 android:orientation="vertical">
 
                 <TextView
                     android:id="@+id/textView5"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="80dp"
                     android:layout_weight="3"
                     android:clickable="false"
                     android:editable="false"
@@ -91,7 +83,7 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="55dp"
+                android:layout_height="57dp"
                 android:orientation="horizontal">
 
                 <EditText
@@ -109,15 +101,14 @@
                     android:layout_height="50dp"
                     android:background="@drawable/calendar"
                     android:onClick="showDatePickerDialog" />
-                />
 
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="57dp"
                 android:orientation="horizontal"
-                android:paddingTop="20dp">
+                android:paddingTop="10dp">
 
                 <EditText
                     android:id="@+id/urunAra"
@@ -140,7 +131,6 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_weight="3"
                 android:orientation="vertical">
 
                 <TextView
@@ -165,27 +155,49 @@
                     tools:visibility="invisible" />
 
                 <LinearLayout
+                    android:layout_width="120dp"
+                    android:layout_height="120dp"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:id="@+id/urunResmi"
+                        android:layout_width="match_parent"
+                        android:layout_height="178dp"
+                        android:layout_weight="1"
+                        android:visibility="gone"
+                        app:srcCompat="@drawable/cast_ic_mini_controller_stop_large" />
+                </LinearLayout>
+
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="76dp"
                     android:orientation="horizontal">
 
-                    <TextView
-                        android:id="@+id/adetLbl"
-                        android:layout_width="159dp"
-                        android:layout_height="31dp"
-                        android:layout_weight="1"
-                        android:text="Adet :"
-                        android:visibility="gone" />
-
-                    <EditText
-                        android:id="@+id/urunAdet"
+                    <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="match_parent"
                         android:layout_weight="1"
-                        android:ems="10"
-                        android:inputType="number"
-                        android:textColorLink="@color/list_row_hover_start_color"
-                        android:visibility="gone" />
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/adetLbl"
+                            android:layout_width="match_parent"
+                            android:layout_height="31dp"
+                            android:layout_weight="1"
+                            android:text="Adet :"
+                            android:visibility="gone" />
+
+                        <EditText
+                            android:id="@+id/urunAdet"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:ems="10"
+                            android:inputType="number"
+                            android:textColorLink="@color/list_row_hover_start_color"
+                            android:visibility="gone" />
+                    </LinearLayout>
+
                 </LinearLayout>
 
                 <Button
@@ -200,12 +212,11 @@
                     android:id="@+id/veriListele"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Sayımı Listele" />
+                    android:text="Listele" />
 
             </LinearLayout>
 
         </LinearLayout>
-
 
 
     </RelativeLayout>

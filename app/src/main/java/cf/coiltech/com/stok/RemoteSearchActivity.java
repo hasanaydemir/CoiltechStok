@@ -1,5 +1,7 @@
 package cf.coiltech.com.stok;
-
+/**
+ * Created by Hasan Aydemir 10.04.2018
+ * */
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
@@ -13,6 +15,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
@@ -87,6 +90,7 @@ public class RemoteSearchActivity extends AppCompatActivity implements ContactsA
 
         whiteNotificationBar(recyclerView);
 
+
         apiService = ApiClient.getClient().create(ApiService.class);
 
         DisposableObserver<List<Contact>> observer = getSearchObserver();
@@ -158,6 +162,19 @@ public class RemoteSearchActivity extends AppCompatActivity implements ContactsA
             }
         });
 
+        //clear search results button
+        Button temizleButton = (Button) findViewById(R.id.temizle);
+
+        //clear search results by button
+
+        temizleButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                inputSearch.setText("");
+                contactsList.clear();
+                publishSubject.onNext("");
+            }
+        });
 
 
     }

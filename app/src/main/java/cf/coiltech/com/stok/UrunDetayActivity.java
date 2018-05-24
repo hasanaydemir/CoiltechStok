@@ -3,25 +3,24 @@ package cf.coiltech.com.stok;
  * Created by Hasan Aydemir 10.04.2018
  * */
 
-import android.Manifest;
-import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
+
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
+
+import android.provider.ContactsContract;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -30,7 +29,6 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
-import com.google.android.gms.vision.barcode.Barcode;
 import com.squareup.picasso.Picasso;
 
 import org.apache.http.HttpEntity;
@@ -46,17 +44,23 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+
 import java.util.ArrayList;
-import java.util.Calendar;
+
 import java.util.List;
+
 
 import cf.coiltech.com.stok.data.MySingleton;
 
 
 public class UrunDetayActivity extends AppCompatActivity {
+
+    // LogCat tag
+    private static final String TAG = UrunDetayActivity.class.getSimpleName();
 
     public static final int REQUEST_CODE = 100;
     public static final int PERMISSION_REQUEST = 200;
@@ -64,15 +68,17 @@ public class UrunDetayActivity extends AppCompatActivity {
     // CONNECTION_TIMEOUT and READ_TIMEOUT are in milliseconds
     public static final int CONNECTION_TIMEOUT = 10000;
     public static final int READ_TIMEOUT = 15000;
+
+
     Button urunEkle;
-     private EditText urunAra;
+    private Button btnCapturePicture;
+    private EditText urunAra;
     TextView urunAdi, urunID, urunMarka,adetLbl;
     EditText urunAdet;
     ImageView urunResmi;
-     private ProgressDialog pd;
+    private ProgressDialog pd;
     String urunAydi;
-    String ServerURL = "http://192.168.2.22/hm/api/urunEkle.php" ;
-    String TempUrunAdi, TempUrunAdet, TempUrunID;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -81,19 +87,36 @@ public class UrunDetayActivity extends AppCompatActivity {
         urunMarka = (TextView) findViewById(R.id.urunMarka) ;
         urunAdi = (TextView) findViewById(R.id.urunAdi) ;
         urunID = (TextView) findViewById(R.id.urunID) ;
-        urunEkle = (Button) findViewById(R.id.urunEkle);
-        urunAra = (EditText) findViewById(R.id.urunAra) ;
+         urunAra = (EditText) findViewById(R.id.urunAra) ;
         adetLbl = (TextView) findViewById(R.id.adetLbl) ;
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        btnCapturePicture = (Button) findViewById(R.id.btnCapturePicture);
+
+/**
+ * Capture image button click event
+ */
+        btnCapturePicture.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), PhotoUpload.class);
+                intent.putExtra("urunID", urunAra.getText().toString());
+                startActivity(intent);
 
 
+            }
+        });
 
 
         urunResmi= (ImageView) findViewById(R.id.urunResmi);
         pd = new ProgressDialog(UrunDetayActivity.this);
+        //Loading message
         pd.setMessage("Yükleniyor...");
         pd.setCancelable(false);
         pd.setCanceledOnTouchOutside(false);
-
 
 
 
@@ -123,22 +146,6 @@ public class UrunDetayActivity extends AppCompatActivity {
             }
         });
 
-        urunEkle.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View view) {
-         if(urunAdet.getText().toString().equals("")     )
-                {
-                    Toast.makeText(UrunDetayActivity.this,"Adet, Teslim Alan, UYF No ya da Tarih alanları boş bırakılamaz girmediniz!", Toast.LENGTH_LONG).show();
-                }
-               else {
-                GetData();
-                  InsertData(TempUrunAdi, TempUrunAdet, TempUrunID);
-
-                }
-
-             }
-        });
 
 
         urunAydi = getIntent().getExtras().getString("urunID").trim();
@@ -150,14 +157,10 @@ public class UrunDetayActivity extends AppCompatActivity {
 
 
 
-// Add value to temporary variable
-    public void GetData(){
 
-        TempUrunAdi = urunAdi.getText().toString();
-        TempUrunID = urunID.getText().toString();
-        TempUrunAdet = urunAdet.getText().toString();
 
-    }
+
+
 
 
 
@@ -199,7 +202,7 @@ public class UrunDetayActivity extends AppCompatActivity {
  if(urunAdi.toString()!="") {
 
       adetLbl.setVisibility(View.VISIBLE);
-     urunEkle.setVisibility(View.VISIBLE);
+     btnCapturePicture.setVisibility(View.VISIBLE);
      urunResmi.setVisibility(View.VISIBLE);
  }
 
@@ -230,105 +233,24 @@ public class UrunDetayActivity extends AppCompatActivity {
         MySingleton.getInstance(getApplicationContext()).addToRequestQueue(stringRequest);
     }
 
-// insert TextView and EditText values to database
-    public void InsertData(final String turunAdi, final String turunAdet, final String turunID){
-
-     class SendPostReqAsyncTask extends AsyncTask<String, Void, String> {
-        @Override
-        protected String doInBackground(String... params) {
-
-            String UrunAdiHolder = turunAdi;
-            String UrunAdetHolder = turunAdet;
-            String UrunIDHolder = turunID;
-
-            List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-
-            nameValuePairs.add(new BasicNameValuePair("urunAdi", UrunAdiHolder));
-            nameValuePairs.add(new BasicNameValuePair("urunID", UrunIDHolder));
-            nameValuePairs.add(new BasicNameValuePair("urunAdet", UrunAdetHolder));
 
 
-            try {
-                HttpClient httpClient = new DefaultHttpClient();
-
-                HttpPost httpPost = new HttpPost(ServerURL);
-
-                httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs, "UTF-8"));
-
-                HttpResponse httpResponse = httpClient.execute(httpPost);
-
-                HttpEntity httpEntity = httpResponse.getEntity();
 
 
-            } catch (ClientProtocolException e) {
-
-            } catch (IOException e) {
-
-            }
-
-            return "Data Inserted Successfully";
-
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            finish();
         }
 
-
-        @Override
-        protected void onPostExecute(String result) {
-
-            super.onPostExecute(result);
-            urunMarka.setText("");
-            urunAdi.setText("");
-            urunID.setText("");
-            urunAdet.setText("");
-            urunAdet.setVisibility(View.INVISIBLE);
-            adetLbl.setVisibility(View.INVISIBLE);
-            urunEkle.setVisibility(View.INVISIBLE);
-            urunAra.setText("");
-            Toast.makeText(UrunDetayActivity.this, "Ürün başarıyla listeye eklendi", Toast.LENGTH_LONG).show();
-
-        }
+        return super.onOptionsItemSelected(item);
     }
 
 
-        SendPostReqAsyncTask sendPostReqAsyncTask = new SendPostReqAsyncTask();
-         sendPostReqAsyncTask.execute(turunAdi,turunAdet,turunID);
-    }
 
-    private class DownLoadImageTask extends AsyncTask<String,Void,Bitmap>{
-        ImageView imageView;
-
-        public DownLoadImageTask(ImageView imageView){
-            this.imageView = imageView;
-        }
-
-        /*
-            doInBackground(Params... params)
-                Override this method to perform a computation on a background thread.
-         */
-        protected Bitmap doInBackground(String...urls){
-            String urlOfImage = urls[0];
-            Bitmap logo = null;
-            try{
-                InputStream is = new URL(urlOfImage).openStream();
-                /*
-                    decodeStream(InputStream is)
-                        Decode an input stream into a bitmap.
-                 */
-                logo = BitmapFactory.decodeStream(is);
-            }catch(Exception e){ // Catch the download exception
-                e.printStackTrace();
-            }
-            return logo;
-        }
-
-        /*
-            onPostExecute(Result result)
-                Runs on the UI thread after doInBackground(Params...).
-         */
-        protected void onPostExecute(Bitmap result){
-            imageView.setImageBitmap(result);
-        }
-    }
 }
+
+
 
 
 

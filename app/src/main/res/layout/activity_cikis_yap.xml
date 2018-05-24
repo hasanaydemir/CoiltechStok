@@ -127,7 +127,7 @@
                     android:layout_height="50dp"
                     android:background="@drawable/calendar"
                     android:onClick="showDatePickerDialog" />
-                />
+
 
             </LinearLayout>
 

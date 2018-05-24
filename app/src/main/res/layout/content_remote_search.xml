@@ -14,12 +14,22 @@
         android:layout_marginLeft="@dimen/activity_margin"
         android:layout_marginRight="@dimen/activity_margin"
         android:hint="@string/hint_search"
-        android:paddingBottom="@dimen/dimen_20" />
+        android:paddingBottom="@dimen/dimen_20"
+        android:inputType="" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/input_search" />
+
+    <Button
+        android:id="@+id/temizle"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_alignEnd="@+id/input_search"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="@dimen/dimen_10"
+        android:background="@drawable/places_ic_clear" />
 
 </RelativeLayout>

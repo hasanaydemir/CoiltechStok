@@ -6,20 +6,24 @@ package cf.coiltech.com.stok;
 import android.Manifest;
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,6 +32,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.google.android.gms.vision.barcode.Barcode;
+import com.squareup.picasso.Picasso;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -45,8 +50,11 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import cf.coiltech.com.stok.app.AppController;
 import cf.coiltech.com.stok.data.MySingleton;
 
 
@@ -54,15 +62,19 @@ public class SayimActivity extends AppCompatActivity {
 
     public static final int REQUEST_CODE = 100;
     public static final int PERMISSION_REQUEST = 200;
-
-
+    private static final String TAG_SUCCESS = "success";
+    private static final String TAG_MESSAGE = "message";
+    String tag_json_obj = "json_obj_req";
+    private static final String TAG = CikisYapActivity.class.getSimpleName();
+    int success;
+    ImageView urunResmi;
     Button veriListele,scanbtn,urunEkle,tarihButton;
      private EditText urunAra;
     TextView urunAdi, urunID, urunMarka,adetLbl,teslimTarihi;
     EditText urunAdet;
      private ProgressDialog pd;
     String urunAydi;
-    String ServerURL = "http://192.168.2.22/hm/api/sayim/sayimEkle.php" ;
+    String ServerURL = "http://192.168.2.22/hm/api/sayim/sayimEkle2.php" ;
     String TempUrunAdi, TempUrunAdet, TempUrunID,TempTeslimTarihi;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,6 +88,7 @@ public class SayimActivity extends AppCompatActivity {
         urunEkle = (Button) findViewById(R.id.urunEkle);
         urunAra = (EditText) findViewById(R.id.urunAra) ;
         adetLbl = (TextView) findViewById(R.id.adetLbl) ;
+        urunResmi= (ImageView) findViewById(R.id.urunResmi);
 
         pd = new ProgressDialog(SayimActivity.this);
         pd.setMessage("Yükleniyor...");
@@ -162,21 +175,18 @@ public class SayimActivity extends AppCompatActivity {
             public void onClick(View view) {
          if(urunAdet.getText().toString().equals("") || teslimTarihi.getText().toString().equals("")     )
                 {
-                    Toast.makeText(SayimActivity.this,"Adet, Teslim Alan, UYF No ya da Tarih alanları boş bırakılamaz girmediniz!", Toast.LENGTH_LONG).show();
+                    Toast.makeText(SayimActivity.this,"Adet veya Tarih alanları boş bırakılamaz girmediniz!", Toast.LENGTH_LONG).show();
                 }
                else {
                 GetData();
-                  InsertData(TempUrunAdi, TempUrunAdet,TempUrunID,TempTeslimTarihi);
+                urunEkle();
+                  //InsertData(TempUrunAdi, TempUrunAdet,TempUrunID,TempTeslimTarihi);
 
                 }
 
 
             }
         });
-
-
-
-
 
         //listele button action
         Button veriListele = (Button) findViewById(R.id.veriListele);
@@ -283,14 +293,18 @@ public class SayimActivity extends AppCompatActivity {
                                 String id = jsonobject.getString("id");
                                 String brand = jsonobject.getString("marka");
                                 String isim = jsonobject.getString("model");
+                                String kucukResim = jsonobject.getString("kucuk_resim");
+                                String imgURL ="http://192.168.2.22/hm/"+kucukResim;
                                 urunAdi.setText(isim);
                                 urunID.setText(id);
                                 urunMarka.setText(brand);
+                                Picasso.get().load("http://192.168.2.22/hm/"+kucukResim).into(urunResmi);
  if(urunAdi.toString()!="") {
 
      urunAdet.setVisibility(View.VISIBLE);
      adetLbl.setVisibility(View.VISIBLE);
      urunEkle.setVisibility(View.VISIBLE);
+     urunResmi.setVisibility(View.VISIBLE);
 
  }
 
@@ -321,73 +335,102 @@ public class SayimActivity extends AppCompatActivity {
         MySingleton.getInstance(getApplicationContext()).addToRequestQueue(stringRequest);
     }
 
-// insert TextView and EditText values to database
-    public void InsertData(final String turunAdi, final String turunAdet, final String turunID, final String tTeslimTarihi ){
+    // clear and hide inputs
+    private void resetInputs(){
+        urunMarka.setText("");
+        urunAdi.setText("");
+        urunID.setText("");
+        urunAdet.setText("");
+        urunAdet.setVisibility(View.INVISIBLE);
+        adetLbl.setVisibility(View.INVISIBLE);
+        urunEkle.setVisibility(View.INVISIBLE);
+       urunResmi.setVisibility(View.INVISIBLE);
+        urunAra.setText("");
+    }
 
-     class SendPostReqAsyncTask extends AsyncTask<String, Void, String> {
-        @Override
-        protected String doInBackground(String... params) {
+    //add input values to mysql table
+    private void urunEkle() {
+        String url = ServerURL;
+        StringRequest strReq = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
 
-            String UrunAdiHolder = turunAdi;
-            String UrunAdetHolder = turunAdet;
-            String UrunIDHolder = turunID;
-            String TeslimTarihiHolder = tTeslimTarihi;
+            @Override
+            public void onResponse(String response) {
+                Log.d(TAG, "Response: " + response.toString());
 
-            List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+                try {
+                    JSONObject jObj = new JSONObject(response);
+                    success = jObj.getInt(TAG_SUCCESS);
 
-            nameValuePairs.add(new BasicNameValuePair("urunAdi", UrunAdiHolder));
-            nameValuePairs.add(new BasicNameValuePair("urunID", UrunIDHolder));
-            nameValuePairs.add(new BasicNameValuePair("urunAdet", UrunAdetHolder));
-            nameValuePairs.add(new BasicNameValuePair("teslimTarihi", TeslimTarihiHolder));
-
-
-            try {
-                HttpClient httpClient = new DefaultHttpClient();
-
-                HttpPost httpPost = new HttpPost(ServerURL);
-
-                httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs, "UTF-8"));
-
-                HttpResponse httpResponse = httpClient.execute(httpPost);
-
-                HttpEntity httpEntity = httpResponse.getEntity();
+                    // Check error getting json data
+                    if (success == 1) {
 
 
-            } catch (ClientProtocolException e) {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(SayimActivity.this);
 
-            } catch (IOException e) {
+                        //Setting message manually and performing action on button click
+                        builder.setMessage(jObj.getString(TAG_MESSAGE))
+                                .setCancelable(false)
+                                .setNegativeButton("Tamam", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        //  Action for 'NO' Button
+                                        dialog.cancel();
+                                    }
+                                });
+
+                        //Creating dialog box
+                        AlertDialog alert = builder.create();
+                        //Setting the title manually
+                        alert.setTitle("Hata!");
+                        alert.show();
+
+                    }
+
+                    else if (success == 2) {
+                        Log.d("Add", jObj.toString());
+
+                        resetInputs();
+
+                        Toast.makeText(SayimActivity.this, jObj.getString(TAG_MESSAGE), Toast.LENGTH_LONG).show();
+
+
+                    }
+                    else {
+                        Toast.makeText(SayimActivity.this, jObj.getString(TAG_MESSAGE), Toast.LENGTH_LONG).show();
+                    }
+                } catch (JSONException e) {
+                    // JSON error
+                    e.printStackTrace();
+                }
 
             }
+        }, new Response.ErrorListener() {
 
-            return "Data Inserted Successfully";
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e(TAG, "Error: " + error.getMessage());
+                Toast.makeText(SayimActivity.this, error.getMessage(), Toast.LENGTH_LONG).show();
+            }
+        }) {
 
-        }
+            @Override
+            protected Map<String, String> getParams() {
+                // Posting parameters to post url
+                Map<String, String> params = new HashMap<String, String>();
+                // change values depends on update or inster action
+
+                params.put("urunID", urunID.getText().toString());
+                params.put("urunAdet", urunAdet.getText().toString());
+                params.put("teslimTarihi",teslimTarihi.getText().toString());
+                params.put("urunAdi",urunAdi.getText().toString());
 
 
-        @Override
-        protected void onPostExecute(String result) {
+                return params;
+            }
 
-            super.onPostExecute(result);
-            urunMarka.setText("");
-            urunAdi.setText("");
-            urunID.setText("");
-            urunAdet.setText("");
-            urunAdet.setVisibility(View.INVISIBLE);
-            adetLbl.setVisibility(View.INVISIBLE);
-            urunEkle.setVisibility(View.INVISIBLE);
-            urunAra.setText("");
-            Toast.makeText(SayimActivity.this, "Ürün başarıyla listeye eklendi", Toast.LENGTH_LONG).show();
+        };
 
-        }
+        AppController.getInstance().addToRequestQueue(strReq, tag_json_obj);
     }
-
-
-        SendPostReqAsyncTask sendPostReqAsyncTask = new SendPostReqAsyncTask();
-         sendPostReqAsyncTask.execute(turunAdi,turunAdet,turunID);
-    }
-
-
-
 
 }
 

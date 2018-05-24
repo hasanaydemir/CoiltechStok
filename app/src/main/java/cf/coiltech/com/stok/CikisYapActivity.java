@@ -6,6 +6,7 @@ import android.Manifest;
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -13,6 +14,7 @@ import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import org.apache.http.HttpEntity;
@@ -20,8 +22,10 @@ import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 
@@ -32,6 +36,7 @@ import com.android.volley.toolbox.StringRequest;
 
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -44,6 +49,7 @@ import android.widget.Toast;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.squareup.picasso.Picasso;
 
+import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -53,8 +59,11 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import cf.coiltech.com.stok.app.AppController;
 import cf.coiltech.com.stok.data.MySingleton;
 
 
@@ -72,9 +81,15 @@ public class CikisYapActivity extends AppCompatActivity {
     EditText urunAdet,teslimAlan,uyfNo;
     ImageView urunResmi;
      private ProgressDialog pd;
+    int success;
     String urunAydi;
-    String ServerURL = "http://192.168.2.22/hm/api/urunEkle.php" ;
+    String ServerURL = "http://192.168.2.22/hm/api/cikis/urunEkle2.php" ;
     String TempUrunAdi, TempUrunAdet, TempUrunID,TempTeslimAlan,TempTeslimTarihi,TempUyfNo;
+    private static final String TAG_SUCCESS = "success";
+    private static final String TAG_MESSAGE = "message";
+    String tag_json_obj = "json_obj_req";
+    private static final String TAG = CikisYapActivity.class.getSimpleName();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -180,8 +195,8 @@ public class CikisYapActivity extends AppCompatActivity {
                 }
                else {
                 GetData();
-                  InsertData(TempUrunAdi, TempUrunAdet, TempUrunID,TempTeslimAlan,TempUyfNo,TempTeslimTarihi);
-
+                 // run add inputs value to mysql action
+             urunEkle();
                 }
 
 
@@ -189,38 +204,21 @@ public class CikisYapActivity extends AppCompatActivity {
         });
 
 
-        /*
-        //Floating button action
-        FloatingActionButton kayarButon = (FloatingActionButton) findViewById(R.id.fab);
-
-        //change activity by floating button
-        kayarButon.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(CikisYapActivity.this, DataLists.class);
-                startActivityForResult(intent, RESULT_OK);
-            }
-        });
-*/
-
-
-        //listele button action
+         //listele button action
         Button veriListele = (Button) findViewById(R.id.veriListele);
 
         //change activity by floating button
         veriListele.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(CikisYapActivity.this, DataLists.class);
+                Intent intent = new Intent(CikisYapActivity.this, CikisLists.class);
                 startActivityForResult(intent, RESULT_OK);
             }
         });
 
-        //Add XML referans for Button and TextView
+        //Add XML reference for Button and TextView
         tarihButton = (Button) findViewById(R.id.tarihButton);
         teslimTarihi = (TextView) findViewById(R.id.teslimTarihi);
-
-
         tarihButton.setOnClickListener(new View.OnClickListener() {//tarihButona Click Listener ekliyoruz
 
             @Override
@@ -318,7 +316,6 @@ public class CikisYapActivity extends AppCompatActivity {
                                 urunMarka.setText(brand);
                                 Picasso.get().load("http://192.168.2.22/hm/"+kucukResim).into(urunResmi);
 
-                                //new DownLoadImageTask(urunResmi).execute(imgURL);
 
  if(urunAdi.toString()!="") {
 
@@ -335,9 +332,6 @@ public class CikisYapActivity extends AppCompatActivity {
 
                         }
 
-
-
-
                     }
                 },
                 new Response.ErrorListener() {
@@ -349,117 +343,113 @@ public class CikisYapActivity extends AppCompatActivity {
                         }
                     }
                 }
-
         );
 
         MySingleton.getInstance(getApplicationContext()).addToRequestQueue(stringRequest);
     }
+    // clear and hide inputs
+    private void resetInputs(){
+        urunMarka.setText("");
+        urunAdi.setText("");
+        urunID.setText("");
+        urunAdet.setText("");
+        urunAdet.setVisibility(View.INVISIBLE);
+        adetLbl.setVisibility(View.INVISIBLE);
+        urunEkle.setVisibility(View.INVISIBLE);
+        urunResmi.setVisibility(View.INVISIBLE);
+        urunAra.setText("");
+    }
 
-// insert TextView and EditText values to database
-    public void InsertData(final String turunAdi, final String turunAdet, final String turunID, final String tteslimalan,final String tuyfno, final String tTeslimTarihi ){
+    //add inputs value to mysql table
+    private void urunEkle() {
+        String url = ServerURL;
+        StringRequest strReq = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
 
-     class SendPostReqAsyncTask extends AsyncTask<String, Void, String> {
-        @Override
-        protected String doInBackground(String... params) {
+            @Override
+            public void onResponse(String response) {
+                Log.d(TAG, "Response: " + response.toString());
 
-            String UrunAdiHolder = turunAdi;
-            String UrunAdetHolder = turunAdet;
-            String UrunIDHolder = turunID;
-            String TeslimAlanHolder = tteslimalan;
-            String TeslimTarihiHolder = tTeslimTarihi;
-            String UyfNoHolder = tuyfno;
+                try {
+                    JSONObject jObj = new JSONObject(response);
+                    success = jObj.getInt(TAG_SUCCESS);
 
-            List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-
-            nameValuePairs.add(new BasicNameValuePair("urunAdi", UrunAdiHolder));
-            nameValuePairs.add(new BasicNameValuePair("urunID", UrunIDHolder));
-            nameValuePairs.add(new BasicNameValuePair("urunAdet", UrunAdetHolder));
-            nameValuePairs.add(new BasicNameValuePair("teslimAlan", TeslimAlanHolder));
-            nameValuePairs.add(new BasicNameValuePair("teslimTarihi", TeslimTarihiHolder));
-            nameValuePairs.add(new BasicNameValuePair("uyfNo", UyfNoHolder));
-
-
-            try {
-                HttpClient httpClient = new DefaultHttpClient();
-
-                HttpPost httpPost = new HttpPost(ServerURL);
-
-                httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs, "UTF-8"));
-
-                HttpResponse httpResponse = httpClient.execute(httpPost);
-
-                HttpEntity httpEntity = httpResponse.getEntity();
+                    // Check error getting json data
+                    if (success == 1) {
 
 
-            } catch (ClientProtocolException e) {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(CikisYapActivity.this);
+                        //Uncomment the below code to Set the message and title from the strings.xml file
+                        //builder.setMessage(R.string.dialog_message) .setTitle(R.string.dialog_title);
 
-            } catch (IOException e) {
+                        //Setting message manually and performing action on button click
+                        builder.setMessage(jObj.getString(TAG_MESSAGE))
+                                .setCancelable(false)
+                                .setNegativeButton("Tamam", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        //  Action for 'NO' Button
+                                        dialog.cancel();
+                                    }
+                                });
+
+                        //Creating dialog box
+                        AlertDialog alert = builder.create();
+                        //Setting the title manually
+                        alert.setTitle("Hata!");
+                        alert.show();
+                        //Toast.makeText(CikisYapActivity.this, jObj.getString(TAG_MESSAGE), Toast.LENGTH_LONG).show();
+
+                    }
+
+                    else if (success == 2) {
+                        Log.d("Add", jObj.toString());
+
+                        resetInputs();
+
+                        Toast.makeText(CikisYapActivity.this, jObj.getString(TAG_MESSAGE), Toast.LENGTH_LONG).show();
+
+
+                    }
+                    else {
+                         Toast.makeText(CikisYapActivity.this, jObj.getString(TAG_MESSAGE), Toast.LENGTH_LONG).show();
+                    }
+                } catch (JSONException e) {
+                    // JSON error
+                    e.printStackTrace();
+                }
 
             }
+        }, new Response.ErrorListener() {
 
-            return "Data Inserted Successfully";
-
-        }
-
-
-        @Override
-        protected void onPostExecute(String result) {
-
-            super.onPostExecute(result);
-            urunMarka.setText("");
-            urunAdi.setText("");
-            urunID.setText("");
-            urunAdet.setText("");
-            urunAdet.setVisibility(View.INVISIBLE);
-            adetLbl.setVisibility(View.INVISIBLE);
-            urunEkle.setVisibility(View.INVISIBLE);
-            urunAra.setText("");
-            Toast.makeText(CikisYapActivity.this, "Ürün başarıyla listeye eklendi", Toast.LENGTH_LONG).show();
-
-        }
-    }
-
-
-        SendPostReqAsyncTask sendPostReqAsyncTask = new SendPostReqAsyncTask();
-         sendPostReqAsyncTask.execute(turunAdi,turunAdet,turunID);
-    }
-
-    private class DownLoadImageTask extends AsyncTask<String,Void,Bitmap>{
-        ImageView imageView;
-
-        public DownLoadImageTask(ImageView imageView){
-            this.imageView = imageView;
-        }
-
-        /*
-            doInBackground(Params... params)
-                Override this method to perform a computation on a background thread.
-         */
-        protected Bitmap doInBackground(String...urls){
-            String urlOfImage = urls[0];
-            Bitmap logo = null;
-            try{
-                InputStream is = new URL(urlOfImage).openStream();
-                /*
-                    decodeStream(InputStream is)
-                        Decode an input stream into a bitmap.
-                 */
-                logo = BitmapFactory.decodeStream(is);
-            }catch(Exception e){ // Catch the download exception
-                e.printStackTrace();
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e(TAG, "Error: " + error.getMessage());
+                Toast.makeText(CikisYapActivity.this, error.getMessage(), Toast.LENGTH_LONG).show();
             }
-            return logo;
-        }
+        }) {
 
-        /*
-            onPostExecute(Result result)
-                Runs on the UI thread after doInBackground(Params...).
-         */
-        protected void onPostExecute(Bitmap result){
-            imageView.setImageBitmap(result);
-        }
+            @Override
+            protected Map<String, String> getParams() {
+                // Posting parameters to post url
+                Map<String, String> params = new HashMap<String, String>();
+                // change values depends on update or inster action
+
+                    params.put("urunID", urunID.getText().toString());
+                    params.put("urunAdet", urunAdet.getText().toString());
+                    params.put("teslimAlan",teslimAlan.getText().toString());
+                    params.put("teslimTarihi",teslimTarihi.getText().toString());
+                    params.put("uyfNo",uyfNo.getText().toString());
+                params.put("urunAdi",urunAdi.getText().toString());
+
+
+                return params;
+            }
+
+        };
+
+        AppController.getInstance().addToRequestQueue(strReq, tag_json_obj);
     }
-}
+    }
+
 
 
 

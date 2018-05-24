@@ -1,46 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    tools:context="cf.coiltech.com.stok.UrunDetayActivity">
 
     <android.support.design.widget.AppBarLayout
-        android:id="@+id/appbar"
+        android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
-        android:layout_height="57dp"
-        android:background="#faf7f7">
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.AppBarOverlay">
 
-        <android.support.design.widget.CollapsingToolbarLayout
+        <android.support.design.widget.AppBarLayout
+            android:id="@+id/appbar"
             android:layout_width="match_parent"
-            android:layout_height="135dp"
-            app:contentScrim="#fcfcfc"
-            app:layout_scrollFlags="scroll|exitUntilCollapsed"
-            app:toolbarId="@+id/toolbar">
+            android:layout_height="match_parent"
+            android:background="#faf7f7">
 
-            <android.support.v7.widget.Toolbar
-                android:id="@+id/toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"></android.support.v7.widget.Toolbar>
-
-            <LinearLayout
+            <android.support.design.widget.CollapsingToolbarLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="horizontal">
+                app:contentScrim="#fcfcfc"
+                app:layout_scrollFlags="scroll|exitUntilCollapsed"
+                app:toolbarId="@+id/toolbar">
 
-                <ImageView
-                    android:id="@+id/imageView"
+                <android.support.v7.widget.Toolbar
+                    android:id="@+id/toolbar"
                     android:layout_width="match_parent"
-                    android:layout_height="57dp"
-                    android:layout_weight="1"
-                    android:paddingBottom="5dp"
-                    android:paddingLeft="0dp"
-                    android:paddingRight="5dp"
-                    android:paddingTop="5dp"
-                    app:srcCompat="@drawable/banner" />
+                    android:layout_height="?attr/actionBarSize"
+                    android:theme="@style/Coiltech"></android.support.v7.widget.Toolbar>
 
-            </LinearLayout>
-        </android.support.design.widget.CollapsingToolbarLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:id="@+id/imageView"
+                        android:layout_width="match_parent"
+                        android:layout_height="57dp"
+                        android:layout_weight="1"
+                        android:contentDescription="@string/todo"
+                        android:paddingBottom="5dp"
+                        android:paddingEnd="5dp"
+                        android:paddingStart="0dp"
+                        android:paddingTop="5dp"
+                        app:srcCompat="@drawable/banner" />
+
+                </LinearLayout>
+
+            </android.support.design.widget.CollapsingToolbarLayout>
+        </android.support.design.widget.AppBarLayout>
 
     </android.support.design.widget.AppBarLayout>
 
@@ -180,13 +191,16 @@
 
                 </LinearLayout>
 
+
+
                 <Button
-                    android:id="@+id/urunEkle"
+                    android:id="@+id/btnCapturePicture"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Ekle"
-                    android:textColor="@color/cast_libraries_material_featurehighlight_text_body_color"
+                    android:text="Fotoğraf Ekle/Güncelle"
                     android:visibility="gone" />
+
+
 
             </LinearLayout>
 

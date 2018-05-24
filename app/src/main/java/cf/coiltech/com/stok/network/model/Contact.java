@@ -3,8 +3,8 @@ package cf.coiltech.com.stok.network.model;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * Created by ravi on 31/01/18.
- */
+ * Created by Hasan Aydemir 10.04.2018
+ * */
 
 public class Contact {
     String model;

@@ -146,7 +146,7 @@ public class SayimLists extends AppCompatActivity implements SwipeRefreshLayout.
         barcodeGeriDon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                /*Intent intent = new Intent(DataLists.this, CikisYapActivity.class);
+                /*Intent intent = new Intent(CikisLists.this, CikisYapActivity.class);
                 startActivityForResult(intent, RESULT_OK); */
                 //i use finish for turn back barcode read & DB filter activity
                 finish();
@@ -511,7 +511,7 @@ public class SayimLists extends AppCompatActivity implements SwipeRefreshLayout.
     }
 
 
-//confirmation for stok aktar
+//confirmation for copy values temporary table to real mysql table
     private void confirmStokAktar() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
 

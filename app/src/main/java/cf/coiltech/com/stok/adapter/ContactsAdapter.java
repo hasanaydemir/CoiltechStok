@@ -1,8 +1,8 @@
 package cf.coiltech.com.stok.adapter;
 
 /**
- * Created by ravi on 31/01/18.
- */
+ * Created by Hasan Aydemir 10.04.2018
+ * */
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;

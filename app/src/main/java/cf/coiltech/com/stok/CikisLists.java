@@ -4,7 +4,6 @@ package cf.coiltech.com.stok;
  * */
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -39,7 +38,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class DataLists extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
+public class CikisLists extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
 
     Toolbar toolbar;
     ListView list;
@@ -54,14 +53,14 @@ public class DataLists extends AppCompatActivity implements SwipeRefreshLayout.O
     TextView txt_urunAdi, txt_urunMarka;
     String id, urunAdi, urunAdet, urunMarka;
     Button barcodeGeriDon,veriAktar;
-    private static final String TAG = DataLists.class.getSimpleName();
+    private static final String TAG = CikisLists.class.getSimpleName();
 
-    private static String url_select 	 = Server.URL + "urunGeciciCek.php";
-    private static String url_insert 	 = Server.URL + "urunEkle.php";
-    private static String url_edit 	     = Server.URL + "urunDuzenle.php";
-    private static String url_update 	 = Server.URL + "urunGuncelle.php";
-    private static String url_delete 	 = Server.URL + "urunSil.php";
-    private static String url_total_update 	 = Server.URL + "sayimAktar.php";
+    private static String url_select 	 = Server.URL + "/cikis/urunGeciciCek.php";
+    private static String url_insert 	 = Server.URL + "/cikis/urunEkle.php";
+    private static String url_edit 	     = Server.URL + "/cikis/urunDuzenle.php";
+    private static String url_update 	 = Server.URL + "/cikis/urunGuncelle.php";
+    private static String url_delete 	 = Server.URL + "/cikis/urunSil.php";
+    private static String url_total_update 	 = Server.URL + "/cikis/cikisAktar.php";
 
     public static final String TAG_ID       = "id";
     public static final String TAG_URUN_ADI = "model";
@@ -87,7 +86,7 @@ public class DataLists extends AppCompatActivity implements SwipeRefreshLayout.O
         list    = (ListView) findViewById(R.id.list);
 
         // JSON adapter
-        adapter = new Adapter(DataLists.this, itemList);
+        adapter = new Adapter(CikisLists.this, itemList);
         list.setAdapter(adapter);
 
         // Swipe to refresg action
@@ -116,7 +115,7 @@ public class DataLists extends AppCompatActivity implements SwipeRefreshLayout.O
                 final String idx = itemList.get(position).getId();
 
                 final CharSequence[] dialogitem = {"Düzenle", "Sil"};
-                dialog = new AlertDialog.Builder(DataLists.this);
+                dialog = new AlertDialog.Builder(CikisLists.this);
                 dialog.setCancelable(true);
                 dialog.setItems(dialogitem, new DialogInterface.OnClickListener() {
 
@@ -145,7 +144,7 @@ public class DataLists extends AppCompatActivity implements SwipeRefreshLayout.O
         barcodeGeriDon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                /*Intent intent = new Intent(DataLists.this, CikisYapActivity.class);
+                /*Intent intent = new Intent(CikisLists.this, CikisYapActivity.class);
                 startActivityForResult(intent, RESULT_OK); */
                 //i use finish for turn back barcode read & DB filter activity
                 finish();
@@ -190,8 +189,8 @@ public class DataLists extends AppCompatActivity implements SwipeRefreshLayout.O
         callVolley();
     }
 
-    // sent edit text to form
-    private void kosong(){
+    // clear inputs value
+    private void resetInputs(){
         txt_id.setText(null);
         txt_urunAdi.setText(null);
         txt_urunMarka.setText(null);
@@ -200,7 +199,7 @@ public class DataLists extends AppCompatActivity implements SwipeRefreshLayout.O
 
     // get values to dialog form
     private void DialogForm(String idx, String urunadix, String urunmarkax, String urunadetx, String button) {
-        dialog = new AlertDialog.Builder(DataLists.this);
+        dialog = new AlertDialog.Builder(CikisLists.this);
         inflater = getLayoutInflater();
         dialogView = inflater.inflate(R.layout.form_update, null);
         dialog.setView(dialogView);
@@ -220,7 +219,7 @@ public class DataLists extends AppCompatActivity implements SwipeRefreshLayout.O
             txt_urunAdet.setText(urunadetx);
 
         } else {
-            kosong();
+           resetInputs();
         }
 
         dialog.setPositiveButton(button, new DialogInterface.OnClickListener() {
@@ -242,7 +241,7 @@ public class DataLists extends AppCompatActivity implements SwipeRefreshLayout.O
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
-                kosong();
+                resetInputs();
             }
         });
 
@@ -297,10 +296,10 @@ public class DataLists extends AppCompatActivity implements SwipeRefreshLayout.O
         AppController.getInstance().addToRequestQueue(jArr);
     }
 
-    // fungsi untuk menyimpan atau update
+    // Update values
     private void simpan_update() {
         String url;
-        // inster or update action (i'm not use instert function this application)
+        // insert or update action (i'm not use insert function this activity)
         if (id.isEmpty()){
             url = url_insert;
         } else {
@@ -322,13 +321,13 @@ public class DataLists extends AppCompatActivity implements SwipeRefreshLayout.O
                         Log.d("Add/update", jObj.toString());
 
                         callVolley();
-                        kosong();
+                        resetInputs();
 
-                        Toast.makeText(DataLists.this, jObj.getString(TAG_MESSAGE), Toast.LENGTH_LONG).show();
+                        Toast.makeText(CikisLists.this, jObj.getString(TAG_MESSAGE), Toast.LENGTH_LONG).show();
                         adapter.notifyDataSetChanged();
 
                     } else {
-                        Toast.makeText(DataLists.this, jObj.getString(TAG_MESSAGE), Toast.LENGTH_LONG).show();
+                        Toast.makeText(CikisLists.this, jObj.getString(TAG_MESSAGE), Toast.LENGTH_LONG).show();
                     }
                 } catch (JSONException e) {
                     // JSON error
@@ -341,7 +340,7 @@ public class DataLists extends AppCompatActivity implements SwipeRefreshLayout.O
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.e(TAG, "Error: " + error.getMessage());
-                Toast.makeText(DataLists.this, error.getMessage(), Toast.LENGTH_LONG).show();
+                Toast.makeText(CikisLists.this, error.getMessage(), Toast.LENGTH_LONG).show();
             }
         }) {
 
@@ -397,7 +396,7 @@ public class DataLists extends AppCompatActivity implements SwipeRefreshLayout.O
                         adapter.notifyDataSetChanged();
 
                     } else {
-                        Toast.makeText(DataLists.this, jObj.getString(TAG_MESSAGE), Toast.LENGTH_LONG).show();
+                        Toast.makeText(CikisLists.this, jObj.getString(TAG_MESSAGE), Toast.LENGTH_LONG).show();
                     }
                 } catch (JSONException e) {
                     // JSON error
@@ -410,7 +409,7 @@ public class DataLists extends AppCompatActivity implements SwipeRefreshLayout.O
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.e(TAG, "Error: " + error.getMessage());
-                Toast.makeText(DataLists.this, error.getMessage(), Toast.LENGTH_LONG).show();
+                Toast.makeText(CikisLists.this, error.getMessage(), Toast.LENGTH_LONG).show();
             }
         }) {
 
@@ -446,12 +445,12 @@ public class DataLists extends AppCompatActivity implements SwipeRefreshLayout.O
 
                         callVolley();
 
-                        Toast.makeText(DataLists.this, jObj.getString(TAG_MESSAGE), Toast.LENGTH_LONG).show();
+                        Toast.makeText(CikisLists.this, jObj.getString(TAG_MESSAGE), Toast.LENGTH_LONG).show();
 
                         adapter.notifyDataSetChanged();
 
                     } else {
-                        Toast.makeText(DataLists.this, jObj.getString(TAG_MESSAGE), Toast.LENGTH_LONG).show();
+                        Toast.makeText(CikisLists.this, jObj.getString(TAG_MESSAGE), Toast.LENGTH_LONG).show();
                     }
                 } catch (JSONException e) {
                     // JSON error
@@ -464,7 +463,7 @@ public class DataLists extends AppCompatActivity implements SwipeRefreshLayout.O
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.e(TAG, "Error: " + error.getMessage());
-                Toast.makeText(DataLists.this, error.getMessage(), Toast.LENGTH_LONG).show();
+                Toast.makeText(CikisLists.this, error.getMessage(), Toast.LENGTH_LONG).show();
             }
         }) {
 
@@ -498,13 +497,13 @@ public class DataLists extends AppCompatActivity implements SwipeRefreshLayout.O
                     // check error json values
                     if (success == 1) {
                         callVolley();
-                        Toast.makeText(DataLists.this, jObj.getString(TAG_MESSAGE), Toast.LENGTH_LONG).show();
+                        Toast.makeText(CikisLists.this, jObj.getString(TAG_MESSAGE), Toast.LENGTH_LONG).show();
 
 
                         adapter.notifyDataSetChanged();
 
                     } else {
-                        Toast.makeText(DataLists.this, jObj.getString(TAG_MESSAGE), Toast.LENGTH_LONG).show();
+                        Toast.makeText(CikisLists.this, jObj.getString(TAG_MESSAGE), Toast.LENGTH_LONG).show();
                     }
                 } catch (JSONException e) {
                     // JSON error
@@ -517,7 +516,7 @@ public class DataLists extends AppCompatActivity implements SwipeRefreshLayout.O
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.e(TAG, "Error: " + error.getMessage());
-                Toast.makeText(DataLists.this, error.getMessage(), Toast.LENGTH_LONG).show();
+                Toast.makeText(CikisLists.this, error.getMessage(), Toast.LENGTH_LONG).show();
             }
         });
 
@@ -526,6 +525,7 @@ public class DataLists extends AppCompatActivity implements SwipeRefreshLayout.O
 
 
 
+//confirmation for copy values temporary table to real mysql table
 
     private void confirmVeriAktar() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);

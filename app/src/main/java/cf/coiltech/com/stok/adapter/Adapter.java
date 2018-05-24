@@ -14,8 +14,8 @@ import cf.coiltech.com.stok.data.Data;
 import java.util.List;
 
 /**
- * Created by Kuncoro on 26/03/2016.
- */
+ * Created by Hasan Aydemir 10.04.2018
+ * */
 public class Adapter extends BaseAdapter {
     private Activity activity;
     private LayoutInflater inflater;

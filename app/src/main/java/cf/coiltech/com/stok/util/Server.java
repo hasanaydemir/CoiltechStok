@@ -1,8 +1,8 @@
 package cf.coiltech.com.stok.util;
 
 /**
- * Created by Kuncoro on 26/03/2016.
- */
+ * Created by Hasan Aydemir 10.04.2018
+ * */
 public class Server {
     /* 10.0.2.2 adalah IP Address localhost EMULATOR ANDROID STUDIO,
     Ganti IP Address tersebut dengan IP Laptop Apabila di RUN di HP. HP dan Laptop harus 1 jaringan */
